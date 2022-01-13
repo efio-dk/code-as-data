@@ -2,7 +2,10 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo AWS $AWS
+  build:
+    commands:
+      - echo { > codebuild.json
+      >- "echo AWS $AWS"
       - echo AWS_DEFAULT_REGION $AWS_DEFAULT_REGION
       - echo AWS_REGION $AWS_REGION
       - echo CODEBUILD_BATCH_BUILD_IDENTIFIER $CODEBUILD_BATCH_BUILD_IDENTIFIER
@@ -28,9 +31,9 @@ phases:
       - echo CODEBUILD_WEBHOOK_PREV_COMMIT $CODEBUILD_WEBHOOK_PREV_COMMIT
       - echo CODEBUILD_WEBHOOK_HEAD_REF $CODEBUILD_WEBHOOK_HEAD_REF
       - echo CODEBUILD_WEBHOOK_TRIGGER $CODEBUILD_WEBHOOK_TRIGGER
-  build:
-    commands:
-      - echo howdy
+      - echo } >>  codebuild.json
+      - cat codebuild.json
 artifacts:
   files:
     - '**/*'
+
