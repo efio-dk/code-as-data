@@ -84,8 +84,12 @@ variable "applications2" {
       base_ref = optional(string)
     })))
 
-    actions = optional(map(object({
-
+    action = optional(map(object({
+      phase       = optional(string)
+      run_order   = optional(number)
+      type        = string
+      src         = string
+      custom_args = optional(string)
     })))
   }))
 

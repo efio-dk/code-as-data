@@ -1,7 +1,7 @@
 resource "aws_security_group" "this" {
   name        = "${local.config.name_prefix}codebuild"
   description = "Used for ${local.config.name_prefix}codebuild projects"
-  vpc_id      = data.aws_vpc.default[0].id
+  vpc_id      = data.aws_vpc.this[0].id
 
   egress {
     from_port        = 0
@@ -70,21 +70,14 @@ resource "aws_codebuild_project" "git_to_s3" {
   ]
 }
 
-/*
 ## Codepipeline Action projects
 
-data "aws_subnet" "this" {
-  id = var.config.codebude_bild_subnet_id
-}
-
-
-
 resource "aws_codebuild_project" "action" {
-  for_each = local.codebuild_action_projects
+  for_each = local.action_type
 
-  name           = "${var.config.name_prefix}action-${each.key}"
-  description    = each.value.description
-  service_role   = aws_iam_role.cicd.arn
+  name = "${local.config.name_prefix}action-${each.key}"
+  # description    = each.value.description
+  service_role   = aws_iam_role.this.arn
   tags           = local.default_tags
   encryption_key = aws_kms_key.this.arn
 
@@ -94,18 +87,18 @@ resource "aws_codebuild_project" "action" {
 
   logs_config {
     cloudwatch_logs {
-      group_name  = aws_cloudwatch_log_group.cicd.name
+      group_name  = aws_cloudwatch_log_group.this.name
       stream_name = "action/${each.key}"
       status      = "ENABLED"
     }
   }
 
   environment {
-    compute_type                = each.value.compute_type
-    image                       = each.value.build_image.image
-    type                        = "LINUX_CONTAINER"
-    privileged_mode             = true
-    image_pull_credentials_type = each.value.build_image.role
+    compute_type    = "BUILD_GENERAL1_SMALL"
+    image           = "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+    type            = "LINUX_CONTAINER"
+    privileged_mode = true
+    # image_pull_credentials_type = each.value.build_image.role
 
     environment_variable {
       name  = "DOCKER_CLI_EXPERIMENTAL"
@@ -116,21 +109,16 @@ resource "aws_codebuild_project" "action" {
   source {
     type = "CODEPIPELINE"
     buildspec = templatefile("${path.module}/buildspec/${each.key}.yaml", {
-      aws_account     = data.aws_caller_identity.current.account_id
-      aws_region      = data.aws_region.current.name
-      bb_ssm_username = var.config.ssm_git_username_key
-      bb_ssm_password = var.config.ssm_git_password_key
-      db_ssm_host     = ""
-      db_ssm_token    = ""
-      s3_artifact     = var.config.databricks_artifact # aws_s3_bucket.artifact.bucket
-      kms_key_id      = aws_kms_key.this.id
+      # aws_account     = data.aws_caller_identity.current.account_id
+      # aws_region      = data.aws_region.current.name
+      # s3_artifact     = var.config.databricks_artifact # aws_s3_bucket.artifact.bucket
+      # kms_key_id      = aws_kms_key.this.id
     })
   }
 
   vpc_config {
-    vpc_id             = data.aws_subnet.this.vpc_id
-    subnets            = [data.aws_subnet.this.id]
-    security_group_ids = [aws_security_group.action.id]
+    vpc_id             = values(data.aws_subnet.this)[0].vpc_id
+    subnets            = [for s in data.aws_subnet.this : s.id]
+    security_group_ids = [aws_security_group.this.id]
   }
 }
-*/

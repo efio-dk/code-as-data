@@ -2,7 +2,7 @@ data "aws_region" "current" {}
 
 data "aws_caller_identity" "current" {}
 
-data "aws_vpc" "default" {
+data "aws_vpc" "this" {
   count   = try(length(local.config.subnet_ids), 0) == 0 ? 1 : 0
   default = true
   state   = "available"
@@ -12,10 +12,10 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
-data "aws_subnet" "default" {
+data "aws_subnet" "this" {
   for_each = toset(data.aws_availability_zones.available.zone_ids)
 
-  vpc_id               = data.aws_vpc.default[0].id
+  vpc_id               = data.aws_vpc.this[0].id
   availability_zone_id = each.key
   state                = "available"
   default_for_az       = true
@@ -85,6 +85,10 @@ locals {
     }
   }
 
+  type_phase_map = {
+    "docker_build" : "build"
+  }
+
   git_repository_breakdown = { for k, v in var.applications2 : k =>
     flatten(regexall("(github.com|bitbucket.org)[:\\/]([^\\/]+)\\/([^\\/]+)\\.git", v.git_repository_url))
   }
@@ -101,10 +105,13 @@ locals {
       }
     ]
   ]) : "${webhook.app}/${webhook.env}" => webhook }
+
+  action_type = toset(flatten([for k, v in local.app : [for a in v.action : a.type]]))
+
 }
 
 locals {
-  debug = { for k, v in aws_codebuild_webhook.this : k => v.url }
+  debug = values(data.aws_subnet.this)[0].vpc_id
 
   default_tags = var.default_tags2
 
@@ -122,5 +129,10 @@ locals {
     branching_strategy = v.branching_strategy != null ? v.branching_strategy : "none"
     branch             = v.branching_strategy == "custom" ? v.branch : local.git_branching_strategy_map[v.branching_strategy].branch
     webhook            = v.branching_strategy == "custom" ? v.webhook : local.git_branching_strategy_map[v.branching_strategy].webhook
+    action = { for name, val in v.action : name => {
+      type  = val.type
+      src   = val.src
+      phase = val.phase != null ? val.phase : try(local.type_phase_map[val.type], name)
+    } }
   } }
 }
