@@ -7,6 +7,7 @@ phases:
       - echo { > codebuild.json
       - >
         cat <<EOL >> codebuild.json
+        
         "AWS": "$AWS",
         "AWS_DEFAULT_REGION": "$AWS_DEFAULT_REGION",
         "AWS_REGION": "$AWS_REGION",
@@ -33,6 +34,7 @@ phases:
         "CODEBUILD_WEBHOOK_PREV_COMMIT": "$CODEBUILD_WEBHOOK_PREV_COMMIT",
         "CODEBUILD_WEBHOOK_HEAD_REF": "$CODEBUILD_WEBHOOK_HEAD_REF",
         "CODEBUILD_WEBHOOK_TRIGGER": "$CODEBUILD_WEBHOOK_TRIGGER"
+
         EOL
       - echo } >>  codebuild.json
       - cat codebuild.json
