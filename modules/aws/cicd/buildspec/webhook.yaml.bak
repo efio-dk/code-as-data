@@ -1,6 +1,6 @@
 version: 0.2
 phases:
-  build:
+  pre_build:
     commands:
       - echo "AWS: $AWS" # CodeBuild provides several environment variables that you can use in your build commands:
       - echo "AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION" # The AWS Region where the build is running (for example, us-east-1). This environment variable is used primarily by the AWS CLI.
@@ -29,6 +29,19 @@ phases:
       - echo "CODEBUILD_WEBHOOK_HEAD_REF: $CODEBUILD_WEBHOOK_HEAD_REF" # The head reference name of the webhook event that triggers the current build. It can be a branch reference or a tag reference.
       - echo "CODEBUILD_WEBHOOK_TRIGGER: $CODEBUILD_WEBHOOK_TRIGGER" # Shows the webhook event that triggered the build. This variable is available only for builds triggered by a webhook. The value is parsed from the payload sent to CodeBuild by GitHub, GitHub Enterprise Server, or Bitbucket. The value's format depends on what type of event triggered the build.
       - echo "HOME: $HOME" # This environment variable is always set to /root.
+
+      # - BRANCH_NAME=$(echo $CODEBUILD_WEBHOOK_HEAD_REF | sed -e "s/refs\///g" | sed -e "s/heads\///g" | sed -e "s/tags\///g" | sed -e "s/[\/]/-/g" | sed -e "s/[æøå]//g")
+      # - SOURCE_URL=$(echo $CODEBUILD_SOURCE_REPO_URL | sed -e "s/https:\/\/bitbucket.org\///g" | sed -e "s/\.git//g")
+  build:
+    commands:
+      - echo $CODEBUILD_WEBHOOK_HEAD_REF
+      - echo "Commit Sha $CODEBUILD_RESOLVED_SOURCE_VERSION"
+      - echo "Branch Name $BRANCH_NAME"
+      - echo $CODEBUILD_RESOLVED_SOURCE_VERSION > commitInformation.txt
+      - echo $BRANCH_NAME >> commitInformation.txt
+      - echo $SOURCE_URL >> commitInformation.txt
+      - echo $CODEBUILD_BUILD_NUMBER >> commitInformation.txt
+      - cat commitInformation.txt
 artifacts:
   files:
     - '**/*'
