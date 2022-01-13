@@ -1,0 +1,51 @@
+FROM amazon/aws-cli
+
+RUN yum -y install unzip tar gzip shadow-utils.x86_64 iptables openssl python3 pip java jq git hugo
+
+# ==== Hugo ====
+# ==== Hugo END ====
+
+# # ==== Docker 20.10.9 ====
+# ENV DOCKER_BUCKET="download.docker.com" \
+#     DOCKER_CHANNEL="stable" \
+#     DIND_COMMIT="3b5fac462d21ca164b3778647420016315289034" \
+#     DOCKER_COMPOSE_VERSION="1.26.0"
+
+# ENV DOCKER_SHA256="caf74e54b58c0b38bb4d96c8f87665f29b684371c9a325562a3904b8c389995e"
+# ENV DOCKER_VERSION="20.10.9"
+
+# VOLUME /var/lib/docker
+
+# RUN set -ex \
+#     && curl -fSL "https://${DOCKER_BUCKET}/linux/static/${DOCKER_CHANNEL}/x86_64/docker-${DOCKER_VERSION}.tgz" -o docker.tgz \
+#     && echo "${DOCKER_SHA256} *docker.tgz" | sha256sum -c - \
+#     && tar --extract --file docker.tgz --strip-components 1  --directory /usr/local/bin/ \
+#     && rm docker.tgz \
+#     && docker -v \
+#     && groupadd dockremap \
+#     && useradd -g dockremap dockremap \
+#     && echo 'dockremap:165536:65536' >> /etc/subuid \
+#     && echo 'dockremap:165536:65536' >> /etc/subgid \
+#     && curl -s -qL -o /usr/local/bin/dind "https://raw.githubusercontent.com/docker/docker/${DIND_COMMIT}/hack/dind" \
+#     && curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-Linux-x86_64 > /usr/local/bin/docker-compose \
+#     && chmod +x /usr/local/bin/dind /usr/local/bin/docker-compose \
+#     && docker-compose version
+# # ==== Docker 20.10.9 END ====
+
+# ==== Terraform ====
+ENV TF_BUCKET="releases.hashicorp.com"
+# https://releases.hashicorp.com/terraform/1.1.2/terraform_1.1.2_SHA256SUMS
+ENV TF_SHA256="734efa82e2d0d3df8f239ce17f7370dabd38e535d21e64d35c73e45f35dfa95c"
+ENV TF_VERSION=1.1.2
+
+RUN curl -s -qL -o terraform_install.zip "https://${TF_BUCKET}/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip" \
+    && echo "${TF_SHA256} *terraform_install.zip" | sha256sum -c - \
+    && unzip "terraform_install.zip" -d /usr/bin/ \
+    && rm terraform_install.zip \
+    $$ terraform --version
+# ==== Terraform END ====
+
+COPY dockerd-entrypoint.sh /usr/local/bin/
+RUN chmod +x "/usr/local/bin/dockerd-entrypoint.sh"
+
+ENTRYPOINT ["/usr/local/bin/dockerd-entrypoint.sh"]
