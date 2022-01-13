@@ -3,6 +3,7 @@ phases:
   pre_build:
     commands:
       - echo aws
+      - echo AWS: $AWS
   build:
     commands:
       - echo howdy
