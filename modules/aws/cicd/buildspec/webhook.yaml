@@ -5,7 +5,6 @@ phases:
   build:
     commands:
       - echo { > codebuild.json
-      - echo ""AWS":"$${AWS}"" >>  codebuild.json
       >-
         cat <<EOL >> codebuild.json
 
@@ -13,7 +12,7 @@ phases:
         "AWS_DEFAULT_REGION": "$AWS_DEFAULT_REGION",
         "AWS_REGION": "$AWS_REGION"
 
-          EOL
+        EOL
       - echo AWS_REGION $AWS_REGION
       - echo CODEBUILD_BATCH_BUILD_IDENTIFIER $CODEBUILD_BATCH_BUILD_IDENTIFIER
       - echo CODEBUILD_BUILD_ARN $CODEBUILD_BUILD_ARN
