@@ -2,7 +2,7 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo AWS: $AWS
+      - echo AWS $AWS
       - echo AWS_DEFAULT_REGION $AWS_DEFAULT_REGION
       - echo AWS_REGION $AWS_REGION
       - echo CODEBUILD_BATCH_BUILD_IDENTIFIER $CODEBUILD_BATCH_BUILD_IDENTIFIER
