@@ -85,11 +85,12 @@ variable "applications2" {
     })))
 
     action = optional(map(object({
-      phase       = optional(string)
-      run_order   = optional(number)
-      type        = string
-      src         = string
-      custom_args = optional(string)
+      stage     = optional(string)
+      run_order = optional(number)
+      type      = string
+      src       = string
+      dst       = optional(string)
+      args      = optional(string)
     })))
   }))
 

@@ -73,9 +73,9 @@ resource "aws_codebuild_project" "git_to_s3" {
 ## Codepipeline Action projects
 
 resource "aws_codebuild_project" "action" {
-  for_each = local.action_type
+  for_each = toset([for k, v in local.action : v.type])
 
-  name = "${local.config.name_prefix}action-${each.key}"
+  name = "${local.config.name_prefix}actiontype_${each.key}"
   # description    = each.value.description
   service_role   = aws_iam_role.this.arn
   tags           = local.default_tags

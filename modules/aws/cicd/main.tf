@@ -85,13 +85,33 @@ locals {
     }
   }
 
-  type_phase_map = {
+  type_stage_map = {
+    "bootstrap" : "build"
     "docker_build" : "build"
+    terraform_deploy : "deploy"
+    // tf plan
+    // manual approve
+    // tf apply
+
+    // build
+    // test
+    // release
+    // deploy
+    // validation
   }
 
-  git_repository_breakdown = { for k, v in var.applications2 : k =>
-    flatten(regexall("(github.com|bitbucket.org)[:\\/]([^\\/]+)\\/([^\\/]+)\\.git", v.git_repository_url))
-  }
+}
+
+locals {
+  debug = local.env
+
+  default_tags = var.default_tags2
+
+  config = defaults(var.config2, {
+    name_prefix                = "efio-"
+    log_retention_in_days      = 7
+    artifact_retention_in_days = 30
+  })
 
   webhook = { for webhook in flatten([
     for app, val in local.app : [
@@ -103,23 +123,12 @@ locals {
         owner      = val.owner,
         repository = val.repository
       }
-    ]
+    ] if try(length(val.webhook) > 0, false)
   ]) : "${webhook.app}/${webhook.env}" => webhook }
 
-  action_type = toset(flatten([for k, v in local.app : [for a in v.action : a.type]]))
-
-}
-
-locals {
-  debug = values(data.aws_subnet.this)[0].vpc_id
-
-  default_tags = var.default_tags2
-
-  config = defaults(var.config2, {
-    name_prefix                = "efio-"
-    log_retention_in_days      = 7
-    artifact_retention_in_days = 30
-  })
+  git_repository_breakdown = { for k, v in var.applications2 : k =>
+    flatten(regexall("(github.com|bitbucket.org)[:\\/]([^\\/]+)\\/([^\\/]+)\\.git", v.git_repository_url))
+  }
 
   app = { for k, v in var.applications2 : k => {
     provider           = local.git_repository_breakdown[k][0]
@@ -130,9 +139,47 @@ locals {
     branch             = v.branching_strategy == "custom" ? v.branch : local.git_branching_strategy_map[v.branching_strategy].branch
     webhook            = v.branching_strategy == "custom" ? v.webhook : local.git_branching_strategy_map[v.branching_strategy].webhook
     action = { for name, val in v.action : name => {
-      type  = val.type
-      src   = val.src
-      phase = val.phase != null ? val.phase : try(local.type_phase_map[val.type], name)
+      type      = val.type
+      src       = val.src
+      dst       = val.dst
+      args      = val.args
+      stage     = local.type_stage_map[val.type]
+      run_order = val.run_order != null ? val.run_order : 1
     } }
   } }
+
+  env = { for e in flatten([for app_name, app in local.app : setunion(
+    [for env, webhook in app.webhook : {
+      app    = app_name
+      env    = env
+      source = "s3"
+
+      provider   = local.git_repository_breakdown[app_name][0]
+      owner      = local.git_repository_breakdown[app_name][1]
+      repository = local.git_repository_breakdown[app_name][2]
+    }],
+    [for env, branch in app.branch : {
+      app        = app_name
+      env        = env
+      source     = "codestar"
+      git        = app.git
+      owner      = local.git_repository_breakdown[app_name][1]
+      repository = local.git_repository_breakdown[app_name][2]
+      branch     = branch
+    }])]) : "${e.app}/${e.env}" => e
+  }
+
+  action = { for a in flatten([
+    for app_name, app in local.app : [
+      for action_name, action in app.action : {
+        app    = app_name
+        action = action_name
+        stage  = action.stage
+        source = try(length(app.webhook) > 0 ? "s3" : "codestar", "codestar")
+        type   = action.type
+    }]]) : "${a.app}/${a.stage}/${a.action}" => a
+  }
+
+
+
 }
