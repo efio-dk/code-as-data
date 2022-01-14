@@ -28,7 +28,7 @@ resource "aws_codepipeline" "this" {
         provider         = "S3"
         version          = "1"
         output_artifacts = ["source_output"]
-        namespace        = "git-source"
+        namespace        = "ns_git_source"
 
         configuration = {
           S3Bucket    = aws_s3_bucket.this.id
@@ -47,7 +47,7 @@ resource "aws_codepipeline" "this" {
         provider         = "CodeStarSourceConnection"
         version          = "1"
         output_artifacts = ["source_output"]
-        namespace        = "git-source"
+        namespace        = "ns_git_source"
 
         configuration = {
           ConnectionArn    = aws_codestarconnections_connection.this[action.value.git].arn
@@ -75,7 +75,7 @@ resource "aws_codepipeline" "this" {
           input_artifacts = ["source_output"]
           version         = "1"
           run_order       = "1"
-          namespace       = "ns-${action.value.stage}-${action.value.action}"
+          namespace       = "ns_${action.value.stage}_${action.value.action}"
 
           configuration = {
             ProjectName = aws_codebuild_project.action[action.value.type].name
@@ -87,12 +87,12 @@ resource "aws_codepipeline" "this" {
               },
               {
                 "name" : "DST",
-                "value" : local.app[action.value.app].action[action.value.action].dst,
+                "value" : local.app[action.value.app].action[action.value.action].dst != null ? local.app[action.value.app].action[action.value.action].dst : "",
                 "type" : "PLAINTEXT"
               },
               {
                 "name" : "ARGS",
-                "value" : local.app[action.value.app].action[action.value.action].args,
+                "value" : local.app[action.value.app].action[action.value.action].args != null ? local.app[action.value.app].action[action.value.action].args : "",
                 "type" : "PLAINTEXT"
               },
             ])

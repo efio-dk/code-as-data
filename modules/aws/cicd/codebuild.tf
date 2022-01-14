@@ -69,7 +69,7 @@ resource "aws_codebuild_project" "git_to_s3" {
 resource "aws_codebuild_project" "action" {
   for_each = toset([for k, v in local.action : v.type])
 
-  name = "${local.config.name_prefix}actiontype_${each.key}"
+  name = "${local.config.name_prefix}action_${each.key}"
   # description    = each.value.description
   service_role   = aws_iam_role.this.arn
   tags           = local.default_tags
