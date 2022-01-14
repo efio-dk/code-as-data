@@ -1,0 +1,17 @@
+version: 0.2
+
+env:
+  shell: bash
+  exported-variables:
+    - OUTPUT
+
+phases:
+  install:
+    commands:
+      - yum install jq -y
+  pre_build:
+    commands:
+      - jq -version
+  build:
+    commands:
+      - echo build
