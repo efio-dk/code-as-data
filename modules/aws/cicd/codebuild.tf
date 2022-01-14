@@ -19,11 +19,10 @@ resource "aws_security_group" "this" {
 ## Git to S3 webhook & codebuild proj
 
 resource "aws_codebuild_project" "git_to_s3" {
-  # for_each = local.webhook
-  or_each = { for k, v in local.env : k => v if k == each.key && v.source == "s3" }
+  for_each = { for k, v in local.env : k => v if v.source == "s3" }
 
-  name = "${local.config.name_prefix}source-${each.value.app}-${each.value.env}"
-  # description    = "Sources from ${each.value.provider} to S3 for ", "${var.config.name_prefix}${each.value.name}")
+  name           = "${local.config.name_prefix}source-${each.value.app}-${each.value.env}"
+  description    = "Sources from ${each.value.provider} to S3 for \"${local.config.name_prefix}${each.value.app}-${each.value.env}\" pipeline"
   build_timeout  = "5"
   service_role   = aws_iam_role.this.arn
   tags           = local.default_tags
@@ -56,13 +55,7 @@ resource "aws_codebuild_project" "git_to_s3" {
     location = "https://${each.value.provider}/${each.value.owner}/${each.value.repository}.git"
 
     git_clone_depth = 1
-    buildspec = templatefile("${path.module}/buildspec/webhook.yaml",
-      {
-        # region     = data.aws_region.current.name
-        # account_id = data.aws_caller_identity.current.account_id
-        # name       = "${local.config.name_prefix}source-${each.value.app}-${each.value.trigger}"
-      }
-    )
+    buildspec       = file("${path.module}/buildspec/webhook.yaml")
   }
 
   depends_on = [

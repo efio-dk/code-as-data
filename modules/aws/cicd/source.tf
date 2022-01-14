@@ -28,7 +28,7 @@ resource "aws_codestarconnections_connection" "this" {
 }
 
 resource "aws_codebuild_webhook" "this" {
-  for_each = local.webhook
+  for_each = { for k, v in local.env : k => v if v.source == "s3" }
 
   project_name = aws_codebuild_project.git_to_s3[each.key].name
   build_type   = "BUILD"
@@ -36,25 +36,25 @@ resource "aws_codebuild_webhook" "this" {
   filter_group {
     filter {
       type    = "EVENT"
-      pattern = each.value.cfg.event
+      pattern = each.value.webhook.event
     }
 
     filter {
       type    = "HEAD_REF"
-      pattern = each.value.cfg.head_ref
+      pattern = each.value.webhook.head_ref
     }
 
     dynamic "filter" {
-      for_each = each.value.cfg.base_ref != null ? [1] : []
+      for_each = each.value.webhook.base_ref != null ? [1] : []
       content {
         type    = "BASE_REF"
-        pattern = each.value.cfg.base_ref
+        pattern = each.value.webhook.base_ref
       }
     }
   }
 
   depends_on = [
     aws_codebuild_project.git_to_s3,
-    # aws_codebuild_source_credential.git
+    aws_codebuild_source_credential.this
   ]
 }

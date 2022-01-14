@@ -113,19 +113,6 @@ locals {
     artifact_retention_in_days = 30
   })
 
-  webhook = { for webhook in flatten([
-    for app, val in local.app : [
-      for env, cfg in val.webhook : {
-        app        = app,
-        env        = env,
-        cfg        = cfg,
-        provider   = val.provider,
-        owner      = val.owner,
-        repository = val.repository
-      }
-    ] if try(length(val.webhook) > 0, false)
-  ]) : "${webhook.app}/${webhook.env}" => webhook }
-
   git_repository_breakdown = { for k, v in var.applications2 : k =>
     flatten(regexall("(github.com|bitbucket.org)[:\\/]([^\\/]+)\\/([^\\/]+)\\.git", v.git_repository_url))
   }
@@ -157,6 +144,7 @@ locals {
       provider   = local.git_repository_breakdown[app_name][0]
       owner      = local.git_repository_breakdown[app_name][1]
       repository = local.git_repository_breakdown[app_name][2]
+      webhook    = webhook
     }],
     [for env, branch in app.branch : {
       app        = app_name
