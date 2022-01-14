@@ -19,10 +19,11 @@ resource "aws_security_group" "this" {
 ## Git to S3 webhook & codebuild proj
 
 resource "aws_codebuild_project" "git_to_s3" {
-  for_each = local.webhook
+  # for_each = local.webhook
+  or_each = { for k, v in local.env : k => v if k == each.key && v.source == "s3" }
 
   name = "${local.config.name_prefix}source-${each.value.app}-${each.value.env}"
-  # description    = format(each.value.description, "${var.config.name_prefix}${each.value.name}")
+  # description    = "Sources from ${each.value.provider} to S3 for ", "${var.config.name_prefix}${each.value.name}")
   build_timeout  = "5"
   service_role   = aws_iam_role.this.arn
   tags           = local.default_tags
