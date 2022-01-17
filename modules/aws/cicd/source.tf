@@ -55,6 +55,5 @@ resource "aws_codebuild_webhook" "this" {
 
   depends_on = [
     aws_codebuild_project.git_to_s3,
-    aws_codebuild_source_credential.this
   ]
 }
