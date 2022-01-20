@@ -1,8 +1,21 @@
 FROM amazon/aws-cli
 
-RUN yum -y install unzip tar gzip shadow-utils.x86_64 iptables openssl python3 pip java jq yq xq git hugo
+# RUN yum -y install unzip tar gzip shadow-utils.x86_64 iptables openssl python3 pip java jq git hugo
+RUN yum upgrade -y \
+    && yum -y install unzip tar gzip shadow-utils.x86_64 openssl python3 pip jq git \
+    && pip3 install yq
 
 # ==== Hugo ====
+ENV HUGO_BUCKET="github.com/gohugoio/hugo" \
+    HUGO_VERSION="0.92.0" \
+    HUGO_SHA256="5305401d4618a18d06ea5e21913c4be55b279a8dacc69e3add36a9bb9b11cb4d"
+
+RUN curl -s -qL -o hugo_Linux-64bit.tar.gz  https://${HUGO_BUCKET}/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.tar.gz \
+    && echo "${HUGO_SHA256} hugo_Linux-64bit.tar.gz" | sha256sum -c - \
+    && tar --extract --file docker.tgz --strip-components 1  --directory /usr/local/bin/ \
+    && rm hugo_Linux-64bit.tar.gz \
+    && hugo version
+
 # ==== Hugo END ====
 
 # # ==== Docker 20.10.9 ====
