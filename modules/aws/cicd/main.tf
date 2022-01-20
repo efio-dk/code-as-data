@@ -1,26 +1,3 @@
-data "aws_region" "current" {}
-
-data "aws_caller_identity" "current" {}
-
-data "aws_vpc" "this" {
-  count   = try(length(local.config.subnet_ids), 0) == 0 ? 1 : 0
-  default = true
-  state   = "available"
-}
-
-data "aws_availability_zones" "available" {
-  state = "available"
-}
-
-data "aws_subnet" "this" {
-  for_each = toset(data.aws_availability_zones.available.zone_ids)
-
-  vpc_id               = data.aws_vpc.this[0].id
-  availability_zone_id = each.key
-  state                = "available"
-  default_for_az       = true
-}
-
 locals {
   git_main_branch = try(local.config.default.git.main_branch != null ? local.config.default.git.main_branch : "main", "main")
 
@@ -103,7 +80,7 @@ locals {
 }
 
 locals {
-  debug = local.env
+  debug = local.action
 
   default_tags = var.default_tags2
 
@@ -127,9 +104,9 @@ locals {
     webhook            = v.branching_strategy == "custom" ? v.webhook : local.git_branching_strategy_map[v.branching_strategy].webhook
     action = { for name, val in v.action : name => {
       type      = val.type
-      src       = val.src
-      dst       = val.dst
-      args      = val.args
+      src       = val.source
+      dst       = val.target != null ? val.target : ""
+      args      = val.custom_args != null ? val.custom_args : ""
       stage     = local.type_stage_map[val.type]
       run_order = val.run_order != null ? val.run_order : 1
     } }
@@ -165,9 +142,7 @@ locals {
         stage  = action.stage
         source = try(length(app.webhook) > 0 ? "s3" : "codestar", "codestar")
         type   = action.type
+        ecr    = contains(["bootstrap"], action.type) && try(length(action.dst) == 0, true)
     }]]) : "${a.app}/${a.stage}/${a.action}" => a
   }
-
-
-
 }

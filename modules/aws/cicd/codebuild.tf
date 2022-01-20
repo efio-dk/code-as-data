@@ -1,21 +1,3 @@
-resource "aws_security_group" "this" {
-  name        = "${local.config.name_prefix}codebuild"
-  description = "Used for ${local.config.name_prefix}codebuild projects"
-  vpc_id      = data.aws_vpc.this[0].id
-
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}codebuild"
-  })
-}
-
 ## Git to S3 webhook & codebuild proj
 
 resource "aws_codebuild_project" "git_to_s3" {
@@ -103,16 +85,14 @@ resource "aws_codebuild_project" "action" {
   source {
     type = "CODEPIPELINE"
     buildspec = templatefile("${path.module}/buildspec/${each.key}.yaml", {
-      # aws_account     = data.aws_caller_identity.current.account_id
-      # aws_region      = data.aws_region.current.name
-      # s3_artifact     = var.config.databricks_artifact # aws_s3_bucket.artifact.bucket
-      # kms_key_id      = aws_kms_key.this.id
+      aws_account = data.aws_caller_identity.current.account_id
+      aws_region  = data.aws_region.current.name
     })
   }
 
-  vpc_config {
-    vpc_id             = values(data.aws_subnet.this)[0].vpc_id
-    subnets            = [for s in data.aws_subnet.this : s.id]
-    security_group_ids = [aws_security_group.this.id]
-  }
+  # vpc_config {
+  #   vpc_id             = values(data.aws_subnet.this)[0].vpc_id
+  #   subnets            = [for s in data.aws_subnet.this : s.id]
+  #   security_group_ids = [aws_security_group.this.id]
+  # }
 }

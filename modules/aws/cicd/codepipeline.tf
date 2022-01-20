@@ -79,23 +79,23 @@ resource "aws_codepipeline" "this" {
 
           configuration = {
             ProjectName = aws_codebuild_project.action[action.value.type].name
-            # EnvironmentVariables = jsonencode([
-            #   {
-            #     "name" : "SRC",
-            #     "value" : local.app[action.value.app].action[action.value.action].src,
-            #     "type" : "PLAINTEXT"
-            #   },
-            #   {
-            #     "name" : "DST",
-            #     "value" : local.app[action.value.app].action[action.value.action].dst != null ? local.app[action.value.app].action[action.value.action].dst : "",
-            #     "type" : "PLAINTEXT"
-            #   },
-            #   {
-            #     "name" : "ARGS",
-            #     "value" : local.app[action.value.app].action[action.value.action].args != null ? local.app[action.value.app].action[action.value.action].args : "",
-            #     "type" : "PLAINTEXT"
-            #   },
-            # ])
+            EnvironmentVariables = jsonencode([
+              {
+                "name" : "SRC",
+                "value" : local.app[action.value.app].action[action.value.action].src,
+                "type" : "PLAINTEXT"
+              },
+              {
+                "name" : "DST",
+                "value" : action.value.ecr ? aws_ecr_repository.this[action.key].repository_url : local.app[action.value.app].action[action.value.action].dst,
+                "type" : "PLAINTEXT"
+              },
+              {
+                "name" : "ARGS",
+                "value" : local.app[action.value.app].action[action.value.action].args,
+                "type" : "PLAINTEXT"
+              },
+            ])
           }
         }
       }

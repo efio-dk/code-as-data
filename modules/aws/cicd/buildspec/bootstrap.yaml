@@ -9,9 +9,16 @@ phases:
   install:
     commands:
       - yum install jq -y
+      - GITHASH=$(jq -r '.CODEBUILD_RESOLVED_SOURCE_VERSION' .codebuild.json | head -c 8)
+      - REGISTRY=$DST
+      - rm .codebuild.json
+
   pre_build:
     commands:
-      - jq -version
+      - aws ecr get-login-password --region ${aws_region} | docker login --username AWS --password-stdin ${aws_account}.dkr.ecr.${aws_region}.amazonaws.com
+      - docker manifest inspect $REGISTRY:git-$GITHASH > /dev/null || EXISTING=$?
+
   build:
     commands:
-      - echo build
+      - (exit $EXISTING) || docker build ./$SRC -t $REGISTRY:latest -t $REGISTRY:git-$GITHASH -t $REGISTRY:build-$CODEBUILD_BUILD_NUMBER $ARGS
+      - (exit $EXISTING) || docker push $REGISTRY --all-tags
