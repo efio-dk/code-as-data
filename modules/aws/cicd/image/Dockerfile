@@ -12,7 +12,7 @@ ENV HUGO_BUCKET="github.com/gohugoio/hugo" \
 
 RUN curl -s -qL -o hugo_Linux-64bit.tar.gz  https://${HUGO_BUCKET}/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.tar.gz \
     && echo "${HUGO_SHA256} hugo_Linux-64bit.tar.gz" | sha256sum -c - \
-    && tar --extract --file docker.tgz --strip-components 1  --directory /usr/local/bin/ \
+    && tar --extract --file hugo_Linux-64bit.tar.gz --strip-components 1  --directory /usr/local/bin/ \
     && rm hugo_Linux-64bit.tar.gz \
     && hugo version
 
