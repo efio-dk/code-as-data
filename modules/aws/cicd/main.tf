@@ -80,9 +80,11 @@ locals {
 }
 
 locals {
-  debug = local.action
+  debug = local.build_image
 
-  default_tags = var.default_tags2
+  default_tags = merge(var.default_tags2, {
+    "Terraform-module" : "code-as-data.com"
+  })
 
   config = defaults(var.config2, {
     name_prefix                = "efio-"
@@ -145,4 +147,6 @@ locals {
         ecr    = contains(["bootstrap"], action.type) && try(length(action.dst) == 0, true)
     }]]) : "${a.app}/${a.stage}/${a.action}" => a
   }
+
+  build_image = local.config.build_image != null ? local.config.build_image : one([for k, v in local.action : "${aws_ecr_repository.this[k].repository_url}:latest" if v.ecr && v.type == "bootstrap"])
 }

@@ -2,29 +2,28 @@ data "aws_region" "current" {}
 
 data "aws_caller_identity" "current" {}
 
-data "aws_vpc" "this" {
-  count   = try(length(local.config.subnet_ids), 0) == 0 ? 1 : 0
-  default = true
-  state   = "available"
-}
-
 data "aws_availability_zones" "available" {
   state = "available"
 }
 
 data "aws_subnet" "this" {
-  for_each = toset(data.aws_availability_zones.available.zone_ids)
+  for_each = local.config.subnet_ids
 
-  vpc_id               = data.aws_vpc.this[0].id
-  availability_zone_id = each.key
-  state                = "available"
-  default_for_az       = true
+  id = each.value
+}
+
+data "aws_vpc" "this" {
+  count = length(data.aws_subnet.this) > 0 ? 1 : 0
+
+  id = one(toset([for s in data.aws_subnet.this : s.vpc_id]))
 }
 
 resource "aws_security_group" "this" {
+  count = length(data.aws_vpc.this) > 0 ? 1 : 0
+
   name        = "${local.config.name_prefix}codebuild"
   description = "Used for ${local.config.name_prefix}codebuild projects"
-  vpc_id      = data.aws_vpc.this[0].id
+  vpc_id      = data.aws_vpc.this[count.index].id
 
   egress {
     from_port        = 0

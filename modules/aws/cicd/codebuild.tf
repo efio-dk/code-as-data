@@ -51,8 +51,8 @@ resource "aws_codebuild_project" "git_to_s3" {
 resource "aws_codebuild_project" "action" {
   for_each = toset([for k, v in local.action : v.type])
 
-  name = "${local.config.name_prefix}action_${each.key}"
-  # description    = each.value.description
+  name           = "${local.config.name_prefix}action_${each.key}"
+  description    = "Generic codebuild project for building ${each.key} actions."
   service_role   = aws_iam_role.this.arn
   tags           = local.default_tags
   encryption_key = aws_kms_key.this.arn
@@ -70,11 +70,11 @@ resource "aws_codebuild_project" "action" {
   }
 
   environment {
-    compute_type    = "BUILD_GENERAL1_SMALL"
-    image           = "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
-    type            = "LINUX_CONTAINER"
-    privileged_mode = true
-    # image_pull_credentials_type = each.value.build_image.role
+    compute_type                = "BUILD_GENERAL1_SMALL"
+    type                        = "LINUX_CONTAINER"
+    privileged_mode             = true
+    image                       = contains(["bootstrap"], each.key) ? "aws/codebuild/amazonlinux2-x86_64-standard:3.0" : local.build_image
+    image_pull_credentials_type = contains(["bootstrap"], each.key) ? null : "SERVICE_ROLE"
 
     environment_variable {
       name  = "DOCKER_CLI_EXPERIMENTAL"
@@ -90,9 +90,13 @@ resource "aws_codebuild_project" "action" {
     })
   }
 
-  # vpc_config {
-  #   vpc_id             = values(data.aws_subnet.this)[0].vpc_id
-  #   subnets            = [for s in data.aws_subnet.this : s.id]
-  #   security_group_ids = [aws_security_group.this.id]
-  # }
+  dynamic "vpc_config" {
+    for_each = data.aws_vpc.this
+
+    content {
+      vpc_id             = vpc_config.value.id
+      subnets            = [for s in data.aws_subnet.this : s.id]
+      security_group_ids = [for sg in aws_security_group.this : sg.id]
+    }
+  }
 }

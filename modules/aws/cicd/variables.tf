@@ -120,3 +120,5 @@ variable "applications2" {
   #   error_message = "\"applications2\" has invalid combination of \"git\", \"branching_strategy\", \"branch\" and \"webhook\"."
   # }
 }
+
+// kun et bootstrap action

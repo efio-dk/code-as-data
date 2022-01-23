@@ -8,9 +8,7 @@ env:
 phases:
   install:
     commands:
-      - yum install jq -y
       - GITHASH=$(jq -r '.CODEBUILD_RESOLVED_SOURCE_VERSION' .codebuild.json | head -c 8)
-      - REGISTRY=$DST
       - rm .codebuild.json
 
   pre_build:
