@@ -8,33 +8,33 @@ variable "config2" {
   description = ""
   type = object({
     name_prefix = optional(string) # [a-z]
-    subnet_ids  = optional(set(string))
+    vpc_cidr    = string
 
-    log_retention_in_days      = optional(number)
-    artifact_retention_in_days = optional(number)
+    availability_zone_count = optional(number)
+    public_subnet_bits      = optional(number)
+    private_subnet_bits     = optional(number)
 
-    git = object({
-      default = optional(object({
-        main_branch        = optional(string)
-        source             = optional(string)
-        branching_strategy = optional(string)
-      }))
-      credentials = optional(object({
-        provider                = string # BITBUCKET | GITHUB
-        token_ssm_parameter     = string
-        user_name_ssm_parameter = optional(string) # The Bitbucket username when the authType is BASIC_AUTH. This parameter is not valid for other types of source providers or connections.
-      }))
-
-      connection = optional(map(string))
-    })
-
-    iam_role_permissions = optional(object({
-      power_user          = optional(bool)
-      power_user_boundary = optional(bool)
-      iam_nonuser_admin   = optional(bool)
-      managed_policies    = optional(list(string))
-      inline_policies     = optional(map(string))
-    }))
+    nat_mode                   = optional(string)
+    flowlogs_retention_in_days = optional(number)
   })
 
+  validation {
+    condition     = var.config2.name_prefix == null || length(try(regexall("^[a-zA-Z-]*$", var.config2.name_prefix), " ")) > 0
+    error_message = "`config.name_prefix` must satisfy pattern `^[a-zA-Z-]+$`."
+  }
+
+  validation {
+    error_message = "`config.availability_zone_count` is invalid. Must be a number between 1 and 3."
+    condition     = try(var.config2.availability_zone_count > 0 && var.config2.availability_zone_count < 4, true)
+  }
+
+  validation {
+    error_message = "`config.vpc_cidr` is invalid. Must be valid CIDR range between /16 and /28."
+    condition     = can(cidrnetmask(var.config2.vpc_cidr))
+  }
+
+  validation {
+    condition     = try(contains(["ha_nat_gw", "single_nat_instance"], var.config2.nat_mode), true)
+    error_message = "`config.nat_mode` is invalid. Valid values are [ha_nat_gw single_nat_instance]."
+  }
 }
