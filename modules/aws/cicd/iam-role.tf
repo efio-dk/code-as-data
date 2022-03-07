@@ -33,6 +33,19 @@ resource "aws_iam_role" "this" {
         ],
         "Resource" : ["${aws_cloudwatch_log_group.this.arn}:*"]
       }]
+      # "Statement" : [
+      #   {
+      #     "Effect" : "Allow"
+      #     "Action" : [
+      #       "iam:*"
+      #     ],
+      #     "Resource" : [
+      #       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*",
+      #       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/*",
+      #       "arn:aws:ecr::${data.aws_caller_identity.current.account_id}:instance-profile/*"
+      #     ] # TODO - consider adding boundaty permissions to avoid creating a user
+      #   }
+      # ]
     })
   }
 

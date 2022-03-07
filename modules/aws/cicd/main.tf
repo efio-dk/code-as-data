@@ -66,6 +66,7 @@ locals {
     "bootstrap" : "build"
     "docker_build" : "build"
     silent_terraform : "deploy"
+    terraform_deploy : "deploy"
     // tf plan
     // manual approve
     // tf apply
