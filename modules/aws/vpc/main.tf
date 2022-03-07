@@ -12,6 +12,7 @@ locals {
   debug = local.route
 
   default_tags = merge(var.default_tags2, {
+    "Terraform-module" : "code-as-data.com"
     tf-workspace = terraform.workspace
   })
   config = defaults(var.config2, {
