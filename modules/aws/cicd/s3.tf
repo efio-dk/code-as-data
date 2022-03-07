@@ -8,9 +8,9 @@ resource "random_pet" "this" {
 }
 
 resource "aws_s3_bucket" "this" {
-  bucket = random_pet.this.id
-  tags   = local.default_tags
-  # force_destroy = true
+  bucket        = random_pet.this.id
+  tags          = local.default_tags
+  force_destroy = true
 
   versioning {
     enabled = true
@@ -24,7 +24,6 @@ resource "aws_s3_bucket" "this" {
       }
     }
   }
-
 
   lifecycle_rule {
     enabled = true

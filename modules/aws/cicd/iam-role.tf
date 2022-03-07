@@ -4,18 +4,16 @@ resource "aws_iam_role" "this" {
 
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Effect" : "Allow",
-        "Principal" : {
-          "Service" : [
-            "codepipeline.amazonaws.com",
-            "codebuild.amazonaws.com",
-          ]
-        },
-        "Action" : "sts:AssumeRole"
-      }
-    ]
+    "Statement" : [{
+      "Effect" : "Allow",
+      "Principal" : {
+        "Service" : [
+          "codepipeline.amazonaws.com",
+          "codebuild.amazonaws.com",
+        ]
+      },
+      "Action" : "sts:AssumeRole"
+    }]
   })
 
   managed_policy_arns = setunion(
@@ -27,19 +25,14 @@ resource "aws_iam_role" "this" {
     name = "cloudwatch_log_permission"
     policy = jsonencode({
       "Version" : "2012-10-17",
-      "Statement" : [
-        {
-          "Effect" : "Allow"
-          "Action" : [
-            "iam:*"
-          ],
-          "Resource" : [
-            "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*",
-            "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/*",
-            "arn:aws:ecr::${data.aws_caller_identity.current.account_id}:instance-profile/*"
-          ] # TODO - consider adding boundaty permissions to avoid creating a user
-        }
-      ]
+      "Statement" : [{
+        "Effect" : "Allow"
+        "Action" : [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Resource" : ["${aws_cloudwatch_log_group.this.arn}:*"]
+      }]
     })
   }
 

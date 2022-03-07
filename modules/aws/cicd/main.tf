@@ -65,7 +65,7 @@ locals {
   type_stage_map = {
     "bootstrap" : "build"
     "docker_build" : "build"
-    terraform_deploy : "deploy"
+    silent_terraform : "deploy"
     // tf plan
     // manual approve
     // tf apply
@@ -84,10 +84,11 @@ locals {
 
   default_tags = merge(var.default_tags2, {
     "Terraform-module" : "code-as-data.com"
+    tf-workspace = terraform.workspace
   })
 
   config = defaults(var.config2, {
-    name_prefix                = "efio-"
+    name_prefix                = "cad-"
     log_retention_in_days      = 7
     artifact_retention_in_days = 30
   })
