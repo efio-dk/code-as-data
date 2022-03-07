@@ -1,0 +1,25 @@
+version: 0.2
+
+env:
+  shell: bash
+  exported-variables:
+    - OUTPUT
+
+phases:
+  install:
+    commands:
+      - yum install jq -y
+      - GITHASH=$(jq -r '.CODEBUILD_RESOLVED_SOURCE_VERSION' .codebuild.json | head -c 8)
+      - REGISTRY=$DST
+      - rm .codebuild.json
+
+  pre_build:
+    commands:
+      - DIGEST=$(sha256sum <(find ./$SRC/. -type f -exec sha256sum {} \; | sort) | head -c 12)
+      - aws ecr get-login-password --region ${aws_region} | docker login --username AWS --password-stdin ${aws_account}.dkr.ecr.${aws_region}.amazonaws.com
+      - docker manifest inspect $REGISTRY:sha256-$DIGEST > /dev/null || EXISTING=$?
+
+  build:
+    commands:
+      - (exit $EXISTING) || docker build ./$SRC -t $REGISTRY:latest -t $REGISTRY:git-$GITHASH -t $REGISTRY:build-$CODEBUILD_BUILD_NUMBER -t $REGISTRY:sha256-$DIGEST $ARGS
+      - (exit $EXISTING) || docker push $REGISTRY --all-tags
