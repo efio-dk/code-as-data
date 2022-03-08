@@ -7,6 +7,14 @@ variable "default_tags" {
 variable "config" {
   description = ""
   type = object({
+    region  = optional(string)
+    profile = optional(string)
+    assume_role = optional(object({
+      role_arn     = string
+      session_name = string
+      external_id  = string
+    }))
+
     name_prefix = optional(string) # [a-z]
     build_image = optional(string)
     subnet_ids  = optional(set(string))
