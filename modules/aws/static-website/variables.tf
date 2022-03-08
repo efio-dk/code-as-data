@@ -1,10 +1,10 @@
-variable "default_tags2" {
+variable "default_tags" {
   description = "A map of default tags, that will be applied to all resources applicable."
   type        = map(string)
   default     = {}
 }
 
-variable "config2" {
+variable "config" {
   description = ""
   type = object({
     name_prefix            = optional(string) # [a-z]

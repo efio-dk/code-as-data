@@ -6,6 +6,7 @@ locals {
     "github.com" : "GitHub"
     "bitbucket" : "Bitbucket"
     "bitbucket.org" : "Bitbucket"
+    "s3" : "s3"
   }
 
   git_branching_strategy_map = {
@@ -65,6 +66,7 @@ locals {
   type_stage_map = {
     "bootstrap" : "build"
     "docker_build" : "build"
+    silent_terraform : "deploy"
     terraform_deploy : "deploy"
     // tf plan
     // manual approve
@@ -82,21 +84,22 @@ locals {
 locals {
   debug = local.build_image
 
-  default_tags = merge(var.default_tags2, {
+  default_tags = merge(var.default_tags, {
     "Terraform-module" : "code-as-data.com"
+    tf-workspace = terraform.workspace
   })
 
-  config = defaults(var.config2, {
-    name_prefix                = "efio-"
+  config = defaults(var.config, {
+    name_prefix                = "cad-"
     log_retention_in_days      = 7
     artifact_retention_in_days = 30
   })
 
-  git_repository_breakdown = { for k, v in var.applications2 : k =>
+  git_repository_breakdown = { for k, v in var.applications : k =>
     flatten(regexall("(github.com|bitbucket.org)[:\\/]([^\\/]+)\\/([^\\/]+)\\.git", v.git_repository_url))
   }
 
-  app = { for k, v in var.applications2 : k => {
+  app = { for k, v in var.applications : k => {
     provider           = local.git_repository_breakdown[k][0]
     owner              = local.git_repository_breakdown[k][1]
     repository         = local.git_repository_breakdown[k][2]
