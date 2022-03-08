@@ -1,10 +1,10 @@
-variable "default_tags2" {
+variable "default_tags" {
   description = "A map of default tags, that will be applied to all resources applicable."
   type        = map(string)
   default     = {}
 }
 
-variable "config2" {
+variable "config" {
   description = ""
   type = object({
     name_prefix = optional(string) # [a-z]
@@ -39,38 +39,38 @@ variable "config2" {
   })
 
   validation {
-    condition     = length(regexall("^[a-zA-Z-]*$", var.config2.name_prefix)) > 0
+    condition     = length(regexall("^[a-zA-Z-]*$", var.config.name_prefix)) > 0
     error_message = "`config.name_prefix` must satisfy pattern `^[a-zA-Z-]+$`."
   }
 
   validation {
-    condition     = contains(["GitHub", "Bitbucket"], try(var.config2.git.credentials.provider, "GitHub"))
+    condition     = contains(["GitHub", "Bitbucket"], try(var.config.git.credentials.provider, "GitHub"))
     error_message = "`config.git.credentials.provider` is invalid. Valid values are [GitHub Bitbucket]."
   }
 
   validation {
     condition = anytrue([
-      try(var.config2.git.credentials.provider, "") == "",
-      try(var.config2.git.credentials.provider, "") == "GitHub" && try(var.config2.git.credentials.user_name_ssm_parameter, null) == null,
-      try(var.config2.git.credentials.provider, "") == "Bitbucket" && try(var.config2.git.credentials.user_name_ssm_parameter, null) != null,
+      try(var.config.git.credentials.provider, "") == "",
+      try(var.config.git.credentials.provider, "") == "GitHub" && try(var.config.git.credentials.user_name_ssm_parameter, null) == null,
+      try(var.config.git.credentials.provider, "") == "Bitbucket" && try(var.config.git.credentials.user_name_ssm_parameter, null) != null,
     ])
     error_message = "\"config.git.credentials.user_name_ssm_parameter\" must be set when \"provider\" is Bitbucket only."
   }
 
   validation {
     condition = alltrue([
-      for k, v in var.config2.git.connection != null ? var.config2.git.connection : {} : length(regexall("^[a-zA-Z-_]*$", k)) > 0
+      for k, v in var.config.git.connection != null ? var.config.git.connection : {} : length(regexall("^[a-zA-Z-_]*$", k)) > 0
     ])
     error_message = "`config.git.connection` key is invalid. Key must satisfy pattern `^[a-zA-Z0-9-_]+$`."
   }
 
   validation {
-    condition     = length([for k, v in var.config2.git.connection != null ? var.config2.git.connection : {} : k if !contains(["GitHub", "Bitbucket"], v)]) == 0
+    condition     = length([for k, v in var.config.git.connection != null ? var.config.git.connection : {} : k if !contains(["GitHub", "Bitbucket"], v)]) == 0
     error_message = "`config.git.connection` is invalid. Valid values are [GitHub Bitbucket]."
   }
 }
 
-variable "applications2" {
+variable "applications" {
   description = ""
   type = map(object({
     git_repository_url = string
@@ -95,21 +95,21 @@ variable "applications2" {
   }))
 
   validation {
-    condition = alltrue([for k, v in var.applications2 :
+    condition = alltrue([for k, v in var.applications :
       length(flatten(regexall("(github.com|bitbucket.org)[:\\/]([^\\/]+)\\/([^\\/]+)\\.git", v.git_repository_url))) == 3
     ])
-    error_message = "`applications2[*].git_repository_url` does not seem to be a valid github or bitbucket repository url. Must satisfy '(github.com|bitbucket.org)[:\\/]([^\\/]+)\\/([^\\/]+)\\.git'."
+    error_message = "`applications[*].git_repository_url` does not seem to be a valid github or bitbucket repository url. Must satisfy '(github.com|bitbucket.org)[:\\/]([^\\/]+)\\/([^\\/]+)\\.git'."
   }
 
   validation {
-    condition = alltrue([for k, v in var.applications2 :
+    condition = alltrue([for k, v in var.applications :
       contains(["none", "single_branch", "main_develop", "pull_request", "tagging", "custom"], v.branching_strategy != null ? v.branching_strategy : "none")
     ])
-    error_message = "`applications2[*].branching_strategy` is invalid. Valid values are [none single_branch main_develop pull_request tagging custom]."
+    error_message = "`applications[*].branching_strategy` is invalid. Valid values are [none single_branch main_develop pull_request tagging custom]."
   }
 
   # validation {
-  #   condition = alltrue([for k, v in var.applications2 :
+  #   condition = alltrue([for k, v in var.applications :
   #     (v.git == null && (v.branching_strategy == null || v.branching_strategy == "none")) ||
   #     (v.git != null && length(regexall("^[a-zA-Z0-9-_]*$", v.git != null ? v.git : "")) > 0 && contains(["single_branch", "main_develop"], v.branching_strategy)) ||
   #     (v.git != null && length(regexall("^[a-zA-Z0-9-_]*$", v.git != null ? v.git : "")) > 0 && (v.branching_strategy == null || v.branching_strategy == "custom") && v.branch != null) ||
@@ -117,7 +117,7 @@ variable "applications2" {
   #     (v.git == "credentials" && (v.branching_strategy == null || v.branching_strategy == "custom") && v.webhook != null) ||
   #     false
   #   ])
-  #   error_message = "\"applications2\" has invalid combination of \"git\", \"branching_strategy\", \"branch\" and \"webhook\"."
+  #   error_message = "\"applications\" has invalid combination of \"git\", \"branching_strategy\", \"branch\" and \"webhook\"."
   # }
 }
 

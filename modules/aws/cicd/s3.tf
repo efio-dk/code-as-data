@@ -8,31 +8,26 @@ resource "random_pet" "this" {
 }
 
 resource "aws_s3_bucket" "this" {
-  bucket        = random_pet.this.id
-  tags          = local.default_tags
+  bucket = random_pet.this.id
+  tags   = local.default_tags
   # force_destroy = true
+}
 
-  versioning {
-    enabled = true
-  }
+resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
+  bucket = aws_s3_bucket.this.bucket
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        kms_master_key_id = aws_kms_key.this.arn
-        sse_algorithm     = "aws:kms"
-      }
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.this.arn
+      sse_algorithm     = "aws:kms"
     }
   }
+}
 
-  lifecycle_rule {
-    enabled = true
-    tags    = local.default_tags
-
-    expiration {
-      days = local.config.artifact_retention_in_days
-      # TODO non-current versions?
-    }
+resource "aws_s3_bucket_versioning" "this" {
+  bucket = aws_s3_bucket.this.id
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
@@ -46,6 +41,19 @@ resource "aws_s3_bucket_public_access_block" "this" {
   depends_on = [
     aws_s3_bucket.this
   ]
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "this" {
+  bucket = aws_s3_bucket.this.id
+
+  rule {
+    id     = "artifacts"
+    status = "Enabled"
+
+    expiration {
+      days = local.config.artifact_retention_in_days
+    }
+  }
 }
 
 data "aws_iam_policy_document" "this" {
