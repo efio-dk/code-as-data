@@ -37,5 +37,6 @@ locals {
     error_document         = "index.html"
     deploy_sample_document = false
     cache_policy           = "CachingOptimized"
+    disable_cloudfront     = false
   })
 }

@@ -5,7 +5,7 @@ output "s3_bucket" {
 
 output "s3_website_domain" {
   description = "The website S3 bucket."
-  value       = aws_s3_bucket.this.website_domain
+  value       = aws_s3_bucket_website_configuration.this.bucket_domain_name
 }
 
 output "kms_id" {
@@ -21,9 +21,4 @@ output "cloudfront_id" {
 output "cloudfront_domain_name" {
   description = "The domain name of the CloudFront distribution."
   value       = aws_cloudfront_distribution.this.domain_name
-}
-
-output "debug" {
-  value = local.debug
-  # sensitive = true
 }

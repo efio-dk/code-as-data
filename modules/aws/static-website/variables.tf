@@ -24,5 +24,6 @@ variable "config" {
     allowed_ip_cidrs       = optional(set(string))
     cache_policy           = optional(string)
     acm_certificate_arn    = optional(string)
+    disable_cloudfront     = optional(bool)
   })
 }

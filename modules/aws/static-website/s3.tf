@@ -7,7 +7,7 @@ resource "random_pet" "this" {
 }
 
 resource "aws_s3_bucket" "this" {
-  bucket = "${local.config.name_prefix}${local.config.domain_name}-${random_pet.this.id}"
+  bucket = "${local.config.name_prefix}static-website-${random_pet.this.id}"
   tags   = local.default_tags
 }
 /*
