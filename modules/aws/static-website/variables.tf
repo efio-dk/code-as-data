@@ -7,6 +7,14 @@ variable "default_tags" {
 variable "config" {
   description = ""
   type = object({
+    region  = optional(string)
+    profile = optional(string)
+    assume_role = optional(object({
+      role_arn     = string
+      session_name = string
+      external_id  = string
+    }))
+
     name_prefix            = optional(string) # [a-z]
     domain_name            = string
     domain_alias           = optional(set(string))
@@ -17,5 +25,4 @@ variable "config" {
     cache_policy           = optional(string)
     acm_certificate_arn    = optional(string)
   })
-
 }
