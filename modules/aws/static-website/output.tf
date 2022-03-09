@@ -5,7 +5,7 @@ output "s3_bucket" {
 
 output "s3_website_domain" {
   description = "The website S3 bucket."
-  value       = aws_s3_bucket_website_configuration.this
+  value       = aws_s3_bucket_website_configuration.this.website_endpoint
 }
 
 output "kms_id" {
