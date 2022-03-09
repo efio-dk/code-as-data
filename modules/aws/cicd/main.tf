@@ -92,7 +92,7 @@ locals {
 }
 
 locals {
-  debug = local.build_image
+  debug = local.env
 
   default_tags = merge(var.default_tags, {
     "Terraform-module" : "code-as-data.com"
