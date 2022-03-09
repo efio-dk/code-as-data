@@ -3,7 +3,7 @@ resource "aws_cloudfront_origin_access_identity" "this" {
 }
 
 resource "aws_cloudfront_distribution" "this" {
-  count = local.config.disable_cloudfront ? 0 : 1
+  # count = local.config.disable_cloudfront ? 0 : 1
 
   depends_on = [
     aws_s3_bucket.this
