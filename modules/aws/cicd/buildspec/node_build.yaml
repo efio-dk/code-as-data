@@ -1,0 +1,21 @@
+version: 0.2
+
+env:
+  shell: bash
+
+phases:
+  install:
+    commands:
+      - npm install
+
+  pre_build:
+    commands:
+      - npm test
+      
+  build:
+    commands:
+      - npm run build
+
+artifacts:
+  files:
+    - 'output/**/*'
