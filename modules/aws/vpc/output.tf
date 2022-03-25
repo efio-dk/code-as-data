@@ -18,6 +18,14 @@ output "vpc_flow_logs_loggroup" {
   value       = local.config.flowlogs_retention_in_days < 1 ? null : aws_cloudwatch_log_group.this[0].arn
 }
 
+output "public_subnet" {
+  value = [ for s in local.subnet : aws_subnet.this[s] if s.type == "public" ]
+}
+
+output "private_subnet" {
+  value = [ for s in local.subnet : aws_subnet.this[s] if s.type == "private" ]
+}
+
 output "debug" {
   value = local.debug
 }
