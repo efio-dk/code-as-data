@@ -19,11 +19,11 @@ output "vpc_flow_logs_loggroup" {
 }
 
 output "public_subnet" {
-  value = [ for s in local.subnet : aws_subnet.this[s] if s.type == "public" ]
+  value = [ for k,v in local.subnet : aws_subnet.this[k] if v.type == "public" ]
 }
 
 output "private_subnet" {
-  value = [ for s in local.subnet : aws_subnet.this[s] if s.type == "private" ]
+  value = [ for k,v in local.subnet : aws_subnet.this[k] if v.type == "private" ]
 }
 
 output "debug" {
