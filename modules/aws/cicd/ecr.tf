@@ -64,5 +64,5 @@ resource "aws_ecr_repository_policy" "this" {
   for_each = { for k, v in local.action : k => v if v.ecr }
 
   repository = aws_ecr_repository.this[each.key].name
-  policy = aws_iam_policy_document.ecr.json
+  policy = data.aws_iam_policy_document.ecr.json
 }
