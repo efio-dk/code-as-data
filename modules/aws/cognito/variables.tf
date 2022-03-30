@@ -19,5 +19,10 @@ variable "config" {
     domain          = string
     certificate_arn = optional(string)
     enable_signup   = optional(bool)
+    client = object({
+      name          = string
+      callback_urls = set(string)
+    })
   })
 }
+
