@@ -30,6 +30,15 @@ case "$2" in
     "destroy")
         terraform -chdir=$DIR$1 destroy -auto-approve
         ;;
+    "lint")
+        tflint --version 
+        tflint --init
+        tflint --module ./modules/$1
+        cd=$(pwd)
+        cd $DIR$1
+        terrascan init
+        terrascan scan
+        ;;
     *)
         echo "$USAGE"
         exit 1

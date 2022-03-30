@@ -1,3 +1,4 @@
+/*
 provider "aws" {
   region  = local.config.region
   profile = local.config.profile
@@ -7,7 +8,7 @@ provider "aws" {
     external_id  = local.config.assume_role != null ? local.config.assume_role.external_id : null
   }
 }
-
+*/
 provider "aws" {
   alias   = "use1"
   region  = "us-east-1"
