@@ -2,6 +2,7 @@ FROM amazon/aws-cli
 
 # RUN yum -y install unzip tar gzip shadow-utils.x86_64 iptables openssl python3 pip java jq git hugo
 RUN yum upgrade -y \
+    && yum update -y \
     && yum -y install unzip tar gzip shadow-utils.x86_64 openssl python3 pip jq git \
     && pip3 install yq
 
