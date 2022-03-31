@@ -1,3 +1,12 @@
+resource "random_pet" "kms" {
+  prefix = "${local.config.name_prefix}kms-cmk"
+  keepers = {
+    account = data.aws_region.current.name
+    region  = data.aws_caller_identity.current.account_id
+    name    = local.config.name_prefix
+  }
+}
+
 data "aws_iam_policy_document" "kms" {
   statement {
     sid       = "Enable IAM User Permissions"
