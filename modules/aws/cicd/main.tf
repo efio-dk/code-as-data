@@ -1,14 +1,3 @@
-/*
-provider "aws" {
-  region  = local.config.region
-  profile = local.config.profile
-  assume_role {
-    role_arn     = local.config.assume_role != null ? local.config.assume_role.role_arn : null
-    session_name = local.config.assume_role != null ? local.config.assume_role.session_name : null
-    external_id  = local.config.assume_role != null ? local.config.assume_role.external_id : null
-  }
-}
-*/
 locals {
   git_main_branch = try(local.config.default.git.main_branch != null ? local.config.default.git.main_branch : "main", "main")
 

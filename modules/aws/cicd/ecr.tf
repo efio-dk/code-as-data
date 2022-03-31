@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "ecr" {
       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
     }
   }
-// https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-policy-examples.html
+  // https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-policy-examples.html
   /*<<EOF
 {
     "Version": "2008-10-17",
@@ -64,5 +64,5 @@ resource "aws_ecr_repository_policy" "this" {
   for_each = { for k, v in local.action : k => v if v.ecr }
 
   repository = aws_ecr_repository.this[each.key].name
-  policy = data.aws_iam_policy_document.ecr.json
+  policy     = data.aws_iam_policy_document.ecr.json
 }
