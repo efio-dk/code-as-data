@@ -66,6 +66,7 @@ resource "aws_instance" "bastion" {
     local.config.bastion_security_groups
   )
   # source_dest_check      = false
+  key_name = "dimh-jr"
 
   tags = merge(local.default_tags, {
     Name = "${local.config.name_prefix}bastion"
