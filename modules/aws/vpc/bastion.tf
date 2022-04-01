@@ -94,10 +94,12 @@ resource "aws_security_group" "bastion" {
 # }
 
 resource "aws_instance" "bastion" {
-  ami                    = data.aws_ami.bastion.id
-  instance_type          = "t3.nano"
-  subnet_id              = aws_subnet.this["public-0"].id
-  vpc_security_group_ids = [aws_security_group.bastion.id]
+  ami           = data.aws_ami.bastion.id
+  instance_type = "t3.nano"
+  subnet_id     = aws_subnet.this["public-0"].id
+  vpc_security_group_ids = merge([aws_security_group.bastion.id],
+    local.config.bastion_security_groups
+  )
   # source_dest_check      = false
 
   tags = merge(local.default_tags, {
