@@ -72,6 +72,8 @@ resource "aws_instance" "bastion" {
     Name = "${local.config.name_prefix}bastion"
   })
 
+user_data =   templatefile("${path.module}/bastion_userdata.sh", {ssh_keys = local.trusted_ssh_public_keys})
+
   root_block_device {
     encrypted = true
   }
