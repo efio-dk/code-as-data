@@ -22,3 +22,7 @@ output "cloudfront_domain_name" {
   description = "The domain name of the CloudFront distribution."
   value       = aws_cloudfront_distribution.this.domain_name
 }
+
+output "ceeretificate_validation_options" {
+  value = aws_acm_certificate.this[0].domain_validation_options 
+}
