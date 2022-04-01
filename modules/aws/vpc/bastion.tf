@@ -49,7 +49,22 @@ resource "aws_security_group" "bastion" {
 resource "aws_iam_role" "bastion" {
   name                 = "${local.config.name_prefix}bastion-role"
   path                 = "/"
-  # assume_role_policy   = data.aws_iam_policy_document.bastion.json
+  assume_role_policy   = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "sts:AssumeRole",
+            "Principal": {
+               "Service": "ec2.amazonaws.com"
+            },
+            "Effect": "Allow",
+            "Sid": ""
+        }
+    ]
+}
+EOF 
+// data.aws_iam_policy_document.bastion.json
 }
 
 resource "aws_iam_instance_profile" "bastion" {
