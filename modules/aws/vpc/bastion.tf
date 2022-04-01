@@ -58,9 +58,9 @@ resource "aws_iam_instance_profile" "bastion" {
 }
 
 resource "aws_instance" "bastion" {
-  ami           = data.aws_ami.bastion.id
-  instance_type = "t3.nano"
-  subnet_id     = aws_subnet.this["public-0"].id
+  ami                  = data.aws_ami.bastion.id
+  instance_type        = "t3.nano"
+  subnet_id            = aws_subnet.this["public-0"].id
   iam_instance_profile = aws_iam_instance_profile.bastion.id
   vpc_security_group_ids = setunion([aws_security_group.bastion.id],
     local.config.bastion_security_groups
@@ -72,7 +72,7 @@ resource "aws_instance" "bastion" {
     Name = "${local.config.name_prefix}bastion"
   })
 
-user_data =   templatefile("${path.module}/bastion_userdata.sh", {ssh_keys = local.config.trusted_ssh_public_keys})
+  user_data = templatefile("${path.module}/bastion_userdata.sh", { ssh_keys = local.config.trusted_ssh_public_keys })
 
   root_block_device {
     encrypted = true
