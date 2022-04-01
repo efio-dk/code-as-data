@@ -36,20 +36,20 @@ resource "aws_security_group" "bastion" {
   })
 }
 
+# data "aws_iam_policy_document" "bastion" {
+#   statement {
+#     actions = [
+#       "kms:Encrypt",
+#       "kms:Decrypt"
+#     ]
+#     resources = ["*"]//[aws_kms_key.key.arn]
+#   }
+# }
+
 resource "aws_iam_role" "bastion" {
   name                 = "${local.config.name_prefix}bastion-role"
   path                 = "/"
-  assume_role_policy   = data.aws_iam_policy_document.bastion.json
-}
-
-data "aws_iam_policy_document" "bastion" {
-  statement {
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt"
-    ]
-    resources = ["*"]//[aws_kms_key.key.arn]
-  }
+  # assume_role_policy   = data.aws_iam_policy_document.bastion.json
 }
 
 resource "aws_iam_instance_profile" "bastion" {
