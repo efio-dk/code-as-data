@@ -97,8 +97,8 @@ resource "aws_instance" "bastion" {
   ami           = data.aws_ami.bastion.id
   instance_type = "t3.nano"
   subnet_id     = aws_subnet.this["public-0"].id
-  vpc_security_group_ids = merge([aws_security_group.bastion.id],
-    local.config.bastion_security_groups != null ? local.config.bastion_security_groups : []
+  vpc_security_group_ids = setunion([aws_security_group.bastion.id],
+    local.config.bastion_security_groups
   )
   # source_dest_check      = false
 
