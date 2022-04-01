@@ -36,40 +36,25 @@ resource "aws_security_group" "bastion" {
   })
 }
 
-# data "aws_iam_policy_document" "bastion" {
-#   statement {
-#     actions = [
-#       "kms:Encrypt",
-#       "kms:Decrypt"
-#     ]
-#     resources = ["*"]//[aws_kms_key.key.arn]
-#   }
-# }
+data "aws_iam_policy_document" "bastion" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
 
 resource "aws_iam_role" "bastion" {
-  name                 = "${local.config.name_prefix}bastion-role"
-  path                 = "/"
-  assume_role_policy   = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": "sts:AssumeRole",
-            "Principal": {
-               "Service": "ec2.amazonaws.com"
-            },
-            "Effect": "Allow",
-            "Sid": ""
-        }
-    ]
-}
-EOF 
-// data.aws_iam_policy_document.bastion.json
+  name               = "${local.config.name_prefix}bastion-role"
+  path               = "/"
+  assume_role_policy = data.aws_iam_policy_document.bastion.json
 }
 
 resource "aws_iam_instance_profile" "bastion" {
   name = "${local.config.name_prefix}bastion-profile"
-  role = "${aws_iam_role.bastion.name}"
+  role = aws_iam_role.bastion.name
 }
 
 resource "aws_instance" "bastion" {
