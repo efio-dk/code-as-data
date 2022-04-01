@@ -25,3 +25,7 @@ output "public_subnet" {
 output "private_subnet" {
   value = [for k, v in local.subnet : aws_subnet.this[k].id if v.type == "private"]
 }
+
+output "bastion_ip" {
+  value = aws_eip_association.bastion
+}

@@ -27,6 +27,7 @@ variable "config" {
 
     trusted_ip_cidrs        = set(string)
     bastion_security_groups = optional(set(string))
+    trusted_ssh_public_keys = set(string)
   })
 
   validation {
