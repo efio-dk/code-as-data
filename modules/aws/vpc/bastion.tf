@@ -36,7 +36,6 @@ resource "aws_security_group" "bastion" {
   })
 }
 
-
 # resource "aws_security_group_rule" "ingress_bastion" {
 #   count            = var.bastion_security_group_id == "" ? 1 : 0
 #   description      = "Incoming traffic to bastion"
@@ -46,18 +45,6 @@ resource "aws_security_group" "bastion" {
 #   protocol         = "TCP"
 #   cidr_blocks      = local.ipv4_cidr_block
 #   ipv6_cidr_blocks = local.ipv6_cidr_block
-
-#   security_group_id = local.security_group
-# }
-
-# resource "aws_security_group_rule" "egress_bastion" {
-#   count       = var.bastion_security_group_id == "" ? 1 : 0
-#   description = "Outgoing traffic from bastion to instances"
-#   type        = "egress"
-#   from_port   = "0"
-#   to_port     = "65535"
-#   protocol    = "-1"
-#   cidr_blocks = ["0.0.0.0/0"]
 
 #   security_group_id = local.security_group
 # }
@@ -74,24 +61,23 @@ resource "aws_security_group" "bastion" {
 #   }
 # }
 
-# resource "aws_iam_role" "bastion" {
-#   name                 = var.bastion_iam_role_name
-#   path                 = "/"
-#   assume_role_policy   = data.aws_iam_policy_document.bastion.json
-# }
+resource "aws_iam_role" "bastion" {
+  name                 = var.bastion_iam_role_name
+  path                 = "/"
+  assume_role_policy   = data.aws_iam_policy_document.bastion.json
+}
 
-# data "aws_iam_policy_document" "bastion" {
+data "aws_iam_policy_document" "bastion" {
 
-#   statement {
-#     actions = [
+  statement {
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt"
+    ]
+    resources = "*"//[aws_kms_key.key.arn]
+  }
 
-#       "kms:Encrypt",
-#       "kms:Decrypt"
-#     ]
-#     resources = [aws_kms_key.key.arn]
-#   }
-
-# }
+}
 
 resource "aws_instance" "bastion" {
   ami           = data.aws_ami.bastion.id
