@@ -37,7 +37,7 @@ resource "aws_security_group" "bastion" {
 }
 
 resource "aws_iam_role" "bastion" {
-  name                 = var.bastion_iam_role_name
+  name                 = "${local.config.name_prefix}bastion-role"
   path                 = "/"
   assume_role_policy   = data.aws_iam_policy_document.bastion.json
 }
