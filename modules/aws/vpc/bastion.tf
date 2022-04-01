@@ -36,31 +36,6 @@ resource "aws_security_group" "bastion" {
   })
 }
 
-# resource "aws_security_group_rule" "ingress_bastion" {
-#   count            = var.bastion_security_group_id == "" ? 1 : 0
-#   description      = "Incoming traffic to bastion"
-#   type             = "ingress"
-#   from_port        = var.public_ssh_port
-#   to_port          = var.public_ssh_port
-#   protocol         = "TCP"
-#   cidr_blocks      = local.ipv4_cidr_block
-#   ipv6_cidr_blocks = local.ipv6_cidr_block
-
-#   security_group_id = local.security_group
-# }
-
-# data "aws_iam_policy_document" "bastion" {
-#   statement {
-#     actions = [
-#       "sts:AssumeRole"
-#     ]
-#     principals {
-#       type        = "Service"
-#       identifiers = ["ec2.amazonaws.com"]
-#     }
-#   }
-# }
-
 resource "aws_iam_role" "bastion" {
   name                 = var.bastion_iam_role_name
   path                 = "/"
@@ -68,7 +43,6 @@ resource "aws_iam_role" "bastion" {
 }
 
 data "aws_iam_policy_document" "bastion" {
-
   statement {
     actions = [
       "kms:Encrypt",
@@ -76,7 +50,11 @@ data "aws_iam_policy_document" "bastion" {
     ]
     resources = "*"//[aws_kms_key.key.arn]
   }
+}
 
+resource "aws_iam_instance_profile" "bastion" {
+  name = "${local.config.name_prefix}bastion-profile"
+  role = "${aws_iam_role.bastion.name}"
 }
 
 resource "aws_instance" "bastion" {
