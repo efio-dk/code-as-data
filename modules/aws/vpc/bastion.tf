@@ -48,8 +48,8 @@ data "aws_iam_policy_document" "bastion" {
 
 resource "aws_iam_role" "bastion" {
   name               = "${local.config.name_prefix}bastion-role"
-  path               = "/"
   assume_role_policy = data.aws_iam_policy_document.bastion.json
+  path               = "/"
 }
 
 resource "aws_iam_instance_profile" "bastion" {
@@ -61,6 +61,7 @@ resource "aws_instance" "bastion" {
   ami           = data.aws_ami.bastion.id
   instance_type = "t3.nano"
   subnet_id     = aws_subnet.this["public-0"].id
+  iam_instance_profile = aws_iam_instance_profile.bastion.id
   vpc_security_group_ids = setunion([aws_security_group.bastion.id],
     local.config.bastion_security_groups
   )
