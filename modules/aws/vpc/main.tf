@@ -11,6 +11,7 @@ locals {
     "Terraform-module" : "code-as-data.com"
     tf-workspace = terraform.workspace
   })
+
   config = defaults(var.config, {
     name_prefix                = "cad-"
     public_subnet_bits         = 28
@@ -40,4 +41,6 @@ locals {
       cidr              = cidrsubnet(local.cidrs[1], local.config.private_subnet_bits - local.vpc_cidr_bits - local.prv_sub_cidr_bits, idx)
     }]
   ) : "${net.type}-${net.no}" => net }
+
+  enable_bastion = local.config.trusted_ssh_public_keys != null ? 1 : 0
 }
