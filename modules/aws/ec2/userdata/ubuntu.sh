@@ -8,7 +8,7 @@ echo ${ssh_key} >> ~ec2-user/.ssh/authorized_keys
 %{ endfor ~}
 
 # Install docker image
-sudo yum install docker -y
+# sudo yum install docker -y
 sudo amazon-linux-extras install docker
 sudo service docker start
 sudo systemctl enable docker
