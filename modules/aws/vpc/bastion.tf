@@ -24,7 +24,7 @@ resource "aws_security_group" "bastion" {
   vpc_id      = aws_vpc.this.id
 
   ingress {
-    description = "Allow ingress traffic from the VPC CIDR block"
+    description = "Allow ingress SSH from ec2 instance connect and trusted ips."
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -72,12 +72,6 @@ data "aws_iam_policy_document" "bastion_inline_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "ec2:osuser"
-      values   = ["ec2-user"]
-    }
-
-    condition {
-      test     = "StringEquals"
       variable = "aws:ResourceTag/ec2-instance-connect"
       values   = ["bastion"]
     }
@@ -116,8 +110,8 @@ resource "aws_instance" "bastion" {
   instance_type        = "t3.nano"
   subnet_id            = aws_subnet.this["public-0"].id
   iam_instance_profile = aws_iam_instance_profile.bastion[0].id
-  monitoring = true
-  user_data = templatefile("${path.module}/bastion_userdata.sh", { ssh_keys = local.config.trusted_ssh_public_keys })
+  monitoring           = true
+  user_data            = templatefile("${path.module}/userdata.sh", { ssh_keys = local.config.trusted_ssh_public_keys })
 
   vpc_security_group_ids = setunion([aws_security_group.bastion[0].id],
     local.config.bastion_security_groups
@@ -132,9 +126,10 @@ resource "aws_instance" "bastion" {
     encrypted = true
   }
 
-  metadata_options {
-    http_tokens = "required"
-  }
+  # metadata_options {
+  #   http_endpoint = "enabled"
+  #   http_tokens   = "required"
+  # }
 
   lifecycle {
     create_before_destroy = true

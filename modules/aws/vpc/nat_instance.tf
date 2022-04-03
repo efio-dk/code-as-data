@@ -65,7 +65,7 @@ resource "aws_instance" "nat_instance" {
   subnet_id              = aws_subnet.this["public-0"].id
   vpc_security_group_ids = [aws_security_group.nat_instance[0].id]
   source_dest_check      = false
-  monitoring = true
+  monitoring             = true
 
   tags = merge(local.default_tags, {
     Name = "${local.config.name_prefix}nat-instance"
@@ -75,9 +75,10 @@ resource "aws_instance" "nat_instance" {
     encrypted = true
   }
 
-  metadata_options {
-    http_tokens = "required"
-  }
+  # metadata_options {
+  #   http_endpoint = "enabled"
+  #   http_tokens   = "required"
+  # }
 
   lifecycle {
     create_before_destroy = true

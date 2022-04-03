@@ -24,5 +24,5 @@ output "cloudfront_domain_name" {
 }
 
 output "certificate_validation_options" {
-  value = aws_acm_certificate.this[0].domain_validation_options 
+  value = aws_acm_certificate.this[0].domain_validation_options
 }
