@@ -143,10 +143,6 @@ resource "aws_launch_configuration" "this" {
   #   http_tokens   = "required"
   # }
 
-  tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}instance"
-  })
-
   lifecycle {
     create_before_destroy = true
   }
