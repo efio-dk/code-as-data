@@ -12,6 +12,7 @@ variable "config" {
     ami           = optional(string)
     volumes = optional(set(object({
       device_name = string
+      mountpoint  = string
       size        = number
       type        = optional(string)
       iops        = optional(number)
@@ -26,5 +27,6 @@ variable "config" {
     private_subnets         = set(string)
     public_subnets          = optional(set(string))
     trusted_ssh_public_keys = optional(set(string))
+    kms_key                 = string
   })
 }
