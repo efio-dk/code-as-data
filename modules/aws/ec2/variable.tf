@@ -10,6 +10,13 @@ variable "config" {
     name_prefix   = optional(string) # [a-z]
     instance_type = string
     ami           = optional(string)
+    volumes = optional(set(object({
+      device_name = string
+      size        = number
+      type        = optional(string)
+      iops        = optional(number)
+      throughput  = optional(number)
+    })))
 
     security_groups  = optional(set(string))
     min_size         = optional(number)

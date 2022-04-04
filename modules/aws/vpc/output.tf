@@ -29,3 +29,15 @@ output "private_subnet" {
 output "bastion_public_ip" {
   value = local.enable_bastion > 0 ? aws_eip_association.bastion[0].public_ip : "n/a"
 }
+
+output "kms_arn" {
+  value = aws_kms_key.this.arn
+}
+
+output "kms_id" {
+  value = aws_kms_key.this.id
+}
+
+output "kms_alis" {
+  value = aws_kms_alias.this.name
+}
