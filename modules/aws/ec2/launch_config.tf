@@ -125,14 +125,14 @@ resource "aws_launch_configuration" "this" {
     for_each = local.config.volumes
 
     content {
-      device_name           = each.value.device_name
+      device_name           = ebs_block_device.value.device_name
       delete_on_termination = true
       encrypted             = true
       # kms_key_id = 
-      volume_size = each.value.size
-      volume_type = each.value.type
-      iops        = each.value.iops
-      throughput  = each.value.throughput
+      volume_size = ebs_block_device.value.size
+      volume_type = ebs_block_device.value.type
+      iops        = ebs_block_device.value.iops
+      throughput  = ebs_block_device.value.throughput
       # tags = merge(local.default_tags, {
       #   instance = "${local.config.name_prefix}instance"
       # })
