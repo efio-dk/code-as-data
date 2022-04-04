@@ -102,9 +102,11 @@ resource "aws_launch_configuration" "this" {
   image_id                    = data.aws_ami.this[local.config.ami].id
   instance_type               = local.config.instance_type
   iam_instance_profile        = aws_iam_instance_profile.this.id
-  security_groups             = setunion(local.config.security_groups, [aws_security_group.launch_config.id])
   associate_public_ip_address = false
   enable_monitoring           = true
+  security_groups = setunion(local.config.security_groups, [
+    aws_security_group.launch_config.id
+  ])
   # ebs_optimized - (Optional) If true, the launched EC2 instance will be EBS-optimized.
   # ebs_block_device - (Optional) Additional EBS block devices to attach to the instance. See Block Devices below for details.
 
@@ -116,7 +118,13 @@ resource "aws_launch_configuration" "this" {
 
   root_block_device {
     encrypted = true
+
   }
+
+# ebs_block_device {
+#   volume_type = "gp2"
+#   volume_size = 30
+# }
 
   # metadata_options {
   #   http_endpoint = "enabled"
