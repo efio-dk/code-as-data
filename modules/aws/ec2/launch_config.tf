@@ -132,9 +132,9 @@ resource "aws_launch_configuration" "this" {
       volume_type = each.value.type
       iops        = each.value.iops
       throughput  = each.value.throughput
-      tags = merge(local.default_tags, {
-        instance = "${local.config.name_prefix}instance"
-      })
+      # tags = merge(local.default_tags, {
+      #   instance = "${local.config.name_prefix}instance"
+      # })
     }
   }
 
