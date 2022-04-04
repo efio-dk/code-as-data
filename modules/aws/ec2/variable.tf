@@ -17,7 +17,7 @@ variable "config" {
       iops        = optional(number)
       throughput  = optional(number)
     })))
-
+    init_commands    = set(string)
     security_groups  = optional(set(string))
     min_size         = optional(number)
     max_size         = optional(number)

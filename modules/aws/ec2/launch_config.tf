@@ -113,6 +113,7 @@ resource "aws_launch_configuration" "this" {
     ssh_keys    = local.config.trusted_ssh_public_keys
     aws_account = data.aws_caller_identity.current.account_id
     aws_region  = data.aws_region.current.name
+    commands    = local.config.init_commands
   })
 
   root_block_device {
