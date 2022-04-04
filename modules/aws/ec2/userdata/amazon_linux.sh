@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Mount volumes
+%{ for volume in volumes ~}
+device=$(realpath ${volume.device_name})
+mkfs -t xfs $device
+mkdir -p ${volume.mountpoint}
+mount $device ${volume.mountpoint}
+
+%{ endfor ~}
+# Volumes mounted
+
 sudo yum update -y
 
 # Add trusted ssh keys 
