@@ -41,7 +41,7 @@ resource "aws_codepipeline" "this" {
       for_each = { for k, v in local.env : k => v if k == each.key && v.source == "codestar" }
 
       content {
-        name             =  "${action.value.owner}/${action.value.repository}?ref=${action.value.branch}"
+        name             =  "${action.value.branch}@${action.value.repository}"
         category         = "Source"
         owner            = "AWS"
         provider         = "CodeStarSourceConnection"
