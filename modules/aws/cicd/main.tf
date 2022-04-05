@@ -64,8 +64,8 @@ locals {
   }
 
   type_stage_map = {
-    "bootstrap" : "build"
-    "docker_build" : "build"
+    bootstrap : "build"
+    docker_build : "build"
     silent_terraform : "deploy"
     terraform_deploy : "deploy"
     // tf plan

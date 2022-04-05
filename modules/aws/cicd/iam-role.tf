@@ -18,7 +18,7 @@ resource "aws_iam_role" "this" {
 
   managed_policy_arns = setunion(
     try(local.config.iam_role_permissions.power_user ? ["arn:aws:iam::aws:policy/PowerUserAccess"] : [], []),
-    try(local.config.iam_role_permissions.managed_policies, [])
+    try(local.config.iam_role_permissions.managed_policies != null ? local.config.iam_role_permissions.managed_policies : [], [])
   )
 
   inline_policy {
