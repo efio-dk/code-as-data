@@ -105,7 +105,7 @@ locals {
     repository         = local.git_repository_breakdown[k][2]
     git                = v.git
     branching_strategy = v.branching_strategy != null ? v.branching_strategy : "none"
-    branch             = v.branching_strategy == "custom" ? v.branch : local.git_branching_strategy_map[v.branching_strategy].branch
+    branch             = contains(["custom", "none"], v.branching_strategy) ? v.branch : local.git_branching_strategy_map[v.branching_strategy].branch
     webhook            = v.branching_strategy == "custom" ? v.webhook : local.git_branching_strategy_map[v.branching_strategy].webhook
     action = { for name, val in v.action : name => {
       type      = val.type
