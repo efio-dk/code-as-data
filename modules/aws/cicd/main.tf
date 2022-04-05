@@ -147,7 +147,7 @@ locals {
         stage  = action.stage
         source = try(length(app.webhook) > 0 ? "s3" : "codestar", "codestar")
         type   = action.type
-        ecr    = contains(["bootstrap"], action.type) && try(length(action.dst) == 0, true)
+        ecr    = contains(["bootstrap", "docker_build"], action.type) && try(length(action.dst) == 0, true)
     }]]) : "${a.app}/${a.stage}/${a.action}" => a
   }
 

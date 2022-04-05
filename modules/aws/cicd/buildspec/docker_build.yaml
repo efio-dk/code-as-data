@@ -8,11 +8,16 @@ env:
 phases:
   install:
     commands:
-      - echo Starting the Docker daemon...
       - /usr/local/bin/dockerd-entrypoint.sh
+      - REGISTRY=$DST
+
   pre_build:
     commands:
-      - echo pre_build
+      - GITHASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)
+      - DIGEST=$(sha256sum <(find ./$SRC/. -type f -exec sha256sum {} \; | sort) | head -c 12)
+      - aws ecr get-login-password --region ${aws_region} | docker login --username AWS --password-stdin ${aws_account}.dkr.ecr.${aws_region}.amazonaws.com
+      - docker manifest inspect $REGISTRY:sha256-$DIGEST > /dev/null || EXISTING=$?
+
   build:
     commands:
-      - echo build
+      - docker build $SRC -t  -t $REGISTRY:latest -t $REGISTRY:git-$GITHASH -t $REGISTRY:build-$CODEBUILD_BUILD_NUMBER -t $REGISTRY:sha256-$DIGEST $ARGS
