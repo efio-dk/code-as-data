@@ -20,4 +20,8 @@ phases:
 
   build:
     commands:
-      - docker build $SRC -t $REGISTRY:latest -t $REGISTRY:git-$GITHASH -t $REGISTRY:build-$CODEBUILD_BUILD_NUMBER -t $REGISTRY:sha256-$DIGEST $ARGS
+      - (exit $EXISTING) || docker build $SRC -t $REGISTRY:latest -t $REGISTRY:git-$GITHASH -t $REGISTRY:build-$CODEBUILD_BUILD_NUMBER -t $REGISTRY:sha256-$DIGEST $ARGS
+
+  post_build:
+    commands:
+      - (exit $EXISTING) || docker push $REGISTRY --all-tags
