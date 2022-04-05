@@ -8,7 +8,6 @@ env:
 phases:
   install:
     commands:
-      - yum install jq -y
       - GITHASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)
       - REGISTRY=$DST
 
