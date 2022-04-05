@@ -46,7 +46,7 @@ EOF*/
 resource "aws_ecr_repository" "this" {
   for_each = { for k, v in local.action : k => v if v.ecr }
 
-  name                 = "${local.config.name_prefix}cicd-image"
+  name                 = "${local.config.name_prefix}${each.value.app}-${each.value.action}"
   image_tag_mutability = "MUTABLE"
   tags                 = local.default_tags
 
