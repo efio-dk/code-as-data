@@ -1,5 +1,5 @@
 locals {
-  git_main_branch = try(local.config.default.git.main_branch != null ? local.config.default.git.main_branch : "main", "main")
+  git_main_branch = try(local.config.git.default.main_branch != null ? local.config.git.default.main_branch : "main", "main")
 
   git_provider_map = {
     "github" : "GitHub"
