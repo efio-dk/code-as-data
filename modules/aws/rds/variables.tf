@@ -16,8 +16,8 @@ variable "config" {
 
     db_name = optional(string)
     port = optional(number)
-    instance_type = optional(number)
-    instance_volume = optional(number)
+    instance_type = optional(string)
+    volume_size = optional(number)
     multi_az = optional(bool)
 
     username = optional(string)
