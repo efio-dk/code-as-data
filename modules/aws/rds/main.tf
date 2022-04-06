@@ -28,6 +28,6 @@ locals {
     username = "admin"
   })
 
-  vpc_id               = one(distinct([for subnet in data.aws_subnet.alb : subnet.vpc_id]))
+  vpc_id               = one(distinct([for subnet in data.aws_subnet.this : subnet.vpc_id]))
 
 }
