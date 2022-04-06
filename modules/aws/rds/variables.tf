@@ -13,6 +13,7 @@ variable "config" {
     multi_az      = optional(bool)
 
     username = optional(string)
+    client_security_groups = optional(set(string))
   })
 }
 

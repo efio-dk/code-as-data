@@ -15,7 +15,7 @@ resource "aws_security_group" "instance" {
     from_port       = local.config.port
     to_port         = local.config.port
     protocol        = "tcp"
-    security_groups = [aws_security_group.client.id]
+    security_groups = setunion([aws_security_group.client.id], local.config.client_security_groups)
     self            = true
   }
 
