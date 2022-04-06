@@ -12,7 +12,7 @@ variable "config" {
     volume_size   = optional(number)
     multi_az      = optional(bool)
 
-    username = optional(string)
+    username               = optional(string)
     client_security_groups = optional(set(string))
   })
 }

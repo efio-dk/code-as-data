@@ -23,8 +23,8 @@ variable "config" {
     kms_key                 = optional(string)
 
     iam_role_permissions = optional(object({
-      managed_policies    = optional(list(string))
-      inline_policies     = optional(map(string))
+      managed_policies = optional(list(string))
+      inline_policies  = optional(map(string))
     }))
   })
 }

@@ -29,7 +29,7 @@ data "aws_iam_policy_document" "ec2_instance_connect_policy" {
 resource "aws_iam_role" "this" {
   name               = "${local.name_prefix}role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
-  path = "/"
+  path               = "/"
 
   managed_policy_arns = try(local.config.iam_role_permissions.managed_policies != null ? local.config.iam_role_permissions.managed_policies : [], [])
 
@@ -37,7 +37,7 @@ resource "aws_iam_role" "this" {
     name   = "ec2_instance_connect"
     policy = data.aws_iam_policy_document.ec2_instance_connect_policy.json
   }
-  
+
   dynamic "inline_policy" {
     for_each = try(local.config.iam_role_permissions.inline_policies != null ? local.config.iam_role_permissions.inline_policies : [], [])
 
