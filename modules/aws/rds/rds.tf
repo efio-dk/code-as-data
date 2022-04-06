@@ -18,7 +18,7 @@
 
 resource "aws_db_subnet_group" "this" {
   name       = "${var.name_prefix}db-group"
-  subnet_ids = [aws_subnet.frontend.id, aws_subnet.backend.id]
+  subnet_ids = local.config.subnet_ids
 
   tags = local.default_tags
 }
