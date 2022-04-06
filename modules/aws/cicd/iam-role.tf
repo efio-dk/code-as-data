@@ -1,5 +1,5 @@
 resource "aws_iam_role" "this" {
-  name = "${local.config.name_prefix}cicd-role"
+  name = "${local.name_prefix}cicd-role"
   tags = local.default_tags
 
   assume_role_policy = jsonencode({

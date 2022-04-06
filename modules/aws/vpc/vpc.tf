@@ -4,7 +4,7 @@ resource "aws_vpc" "this" {
   enable_dns_hostnames = true
 
   tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}vpc"
+    Name = "${local.name_prefix}vpc"
   })
 }
 
@@ -12,7 +12,7 @@ resource "aws_vpc_dhcp_options" "this" {
   domain_name_servers = ["AmazonProvidedDNS"]
 
   tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}dhcp-options"
+    Name = "${local.name_prefix}dhcp-options"
   })
 }
 
@@ -25,6 +25,6 @@ resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
 
   tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}igw"
+    Name = "${local.name_prefix}igw"
   })
 }

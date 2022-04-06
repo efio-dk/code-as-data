@@ -19,7 +19,7 @@ resource "aws_eip" "nat_instance" {
 
   vpc = true
   tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}nat-instance"
+    Name = "${local.name_prefix}nat-instance"
     Type = "public"
   })
 
@@ -31,7 +31,7 @@ resource "aws_eip" "nat_instance" {
 resource "aws_security_group" "nat_instance" {
   count = local.config.nat_mode == "single_nat_instance" ? 1 : 0
 
-  name        = "${local.config.name_prefix}nat-instance"
+  name        = "${local.name_prefix}nat-instance"
   description = "Security Group for NAT Instance"
   vpc_id      = aws_vpc.this.id
 
@@ -53,7 +53,7 @@ resource "aws_security_group" "nat_instance" {
   }
 
   tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}nat-instance"
+    Name = "${local.name_prefix}nat-instance"
   })
 }
 
@@ -68,7 +68,7 @@ resource "aws_instance" "nat_instance" {
   monitoring             = true
 
   tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}nat-instance"
+    Name = "${local.name_prefix}nat-instance"
   })
 
   root_block_device {

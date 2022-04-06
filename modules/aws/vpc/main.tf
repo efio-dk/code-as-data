@@ -1,19 +1,5 @@
-data "aws_region" "current" {}
-
-data "aws_caller_identity" "current" {}
-
-data "aws_availability_zones" "available" {
-  state = "available"
-}
-
 locals {
-  default_tags = merge(var.default_tags, {
-    "Terraform-module" : "code-as-data.com"
-    tf-workspace = terraform.workspace
-  })
-
   config = defaults(var.config, {
-    name_prefix                = "cad-"
     public_subnet_bits         = 28
     private_subnet_bits        = 27
     flowlogs_retention_in_days = -1

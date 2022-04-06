@@ -29,7 +29,7 @@ resource "aws_route_table" "this" {
 
   vpc_id = aws_vpc.this.id
   tags = merge(local.default_tags, {
-    "Name" = "${local.config.name_prefix}${each.key}-route-table"
+    "Name" = "${local.name_prefix}${each.key}-route-table"
   })
 }
 

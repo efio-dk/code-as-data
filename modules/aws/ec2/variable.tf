@@ -1,13 +1,6 @@
-variable "default_tags" {
-  description = "A map of default tags, that will be applied to all resources applicable."
-  type        = map(string)
-  default     = {}
-}
-
 variable "config" {
   description = ""
   type = object({
-    name_prefix   = optional(string) # [a-z]
     instance_type = string
     ami           = optional(string)
     volumes = optional(set(object({
@@ -27,6 +20,6 @@ variable "config" {
     private_subnets         = set(string)
     public_subnets          = optional(set(string))
     trusted_ssh_public_keys = optional(set(string))
-    kms_key                 = string
+    kms_key                 = optional(string)
   })
 }

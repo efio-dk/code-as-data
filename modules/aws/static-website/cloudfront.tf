@@ -1,5 +1,5 @@
 resource "aws_cloudfront_origin_access_identity" "this" {
-  comment = "CloudFront identity for ${local.config.name_prefix}website"
+  comment = "CloudFront identity for ${local.name_prefix}website"
 }
 
 resource "aws_cloudfront_distribution" "this" {

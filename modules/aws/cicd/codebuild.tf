@@ -3,8 +3,8 @@
 resource "aws_codebuild_project" "git_to_s3" {
   for_each = { for k, v in local.env : k => v if v.source == "s3" }
 
-  name           = "${local.config.name_prefix}source-${each.value.app}-${each.value.env}"
-  description    = "Sources from ${each.value.provider} to S3 for \"${local.config.name_prefix}${each.value.app}-${each.value.env}\" pipeline"
+  name           = "${local.name_prefix}source-${each.value.app}-${each.value.env}"
+  description    = "Sources from ${each.value.provider} to S3 for \"${local.name_prefix}${each.value.app}-${each.value.env}\" pipeline"
   build_timeout  = "5"
   service_role   = aws_iam_role.this.arn
   tags           = local.default_tags
@@ -51,7 +51,7 @@ resource "aws_codebuild_project" "git_to_s3" {
 resource "aws_codebuild_project" "action" {
   for_each = toset([for k, v in local.action : v.type])
 
-  name           = "${local.config.name_prefix}action_${each.key}"
+  name           = "${local.name_prefix}action_${each.key}"
   description    = "Generic codebuild project for building ${each.key} actions."
   service_role   = aws_iam_role.this.arn
   tags           = local.default_tags

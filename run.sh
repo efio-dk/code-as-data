@@ -5,14 +5,14 @@ clear
 while [[ $# -gt 0 ]]; do
   case $1 in
     -p|--project)
-      PROJECT="/projects/$2"
+      PROJECT="/test/modules/aws/$2"
       shift # past argument
       shift # past value
       ;;
-    -c|--cicd)
-      PROJECT="/pipelines"
-      shift # past argument
-      ;;
+    # -c|--cicd)
+    #   PROJECT="/pipelines"
+    #   shift # past argument
+    #   ;;
     -i|--init)
       INIT=YES
       shift
@@ -66,5 +66,5 @@ fi
 
 if [[ -n $ACTION ]]; then
   echo terraform -chdir=".$PROJECT" $ACTION -var-file=$(pwd)/global.tfvars $SILENT
-  terraform -chdir=".$PROJECT" $ACTION -var-file=$(pwd)/global.tfvars $SILENT
+  terraform -chdir=".$PROJECT" $ACTION  $SILENT
 fi

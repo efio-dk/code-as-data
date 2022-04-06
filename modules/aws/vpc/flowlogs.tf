@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_log_group" "this" {
   count = local.config.flowlogs_retention_in_days < 1 ? 0 : 1
 
-  name              = "${local.config.name_prefix}flow-log"
+  name              = "${local.name_prefix}flow-log"
   retention_in_days = local.config.flowlogs_retention_in_days
   tags              = local.default_tags
 }
@@ -9,7 +9,7 @@ resource "aws_cloudwatch_log_group" "this" {
 resource "aws_iam_role" "this" {
   count = local.config.flowlogs_retention_in_days < 1 ? 0 : 1
 
-  name = "${local.config.name_prefix}flow_log_role"
+  name = "${local.name_prefix}flow_log_role"
   path = "/"
   tags = local.default_tags
 
@@ -51,6 +51,6 @@ resource "aws_flow_log" "this" {
   vpc_id          = aws_vpc.this.id
 
   tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}flowlog"
+    Name = "${local.name_prefix}flowlog"
   })
 }

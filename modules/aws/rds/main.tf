@@ -1,11 +1,3 @@
-data "aws_region" "current" {}
-
-data "aws_caller_identity" "current" {}
-
-data "aws_availability_zones" "available" {
-  state = "available"
-}
-
 data "aws_subnet" "this" {
   for_each = local.config.subnet_ids
 
@@ -13,11 +5,6 @@ data "aws_subnet" "this" {
 }
 
 locals {
-  default_tags = merge(var.default_tags, {
-    "Terraform-module" : "code-as-data.com"
-    tf-workspace = terraform.workspace
-  })
-
   config = defaults(var.config, {
     port           = 3306
     engine         = "mysql"

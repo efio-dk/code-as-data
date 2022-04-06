@@ -79,18 +79,7 @@ locals {
     // validation
   }
 
-}
-
-locals {
-  debug = local.env
-
-  default_tags = merge(var.default_tags, {
-    "Terraform-module" : "code-as-data.com"
-    tf-workspace = terraform.workspace
-  })
-
   config = defaults(var.config, {
-    name_prefix                = "cad-"
     log_retention_in_days      = 7
     artifact_retention_in_days = 30
   })

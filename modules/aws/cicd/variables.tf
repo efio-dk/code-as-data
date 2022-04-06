@@ -1,13 +1,6 @@
-variable "default_tags" {
-  description = "A map of default tags, that will be applied to all resources applicable."
-  type        = map(string)
-  default     = {}
-}
-
 variable "config" {
   description = ""
   type = object({
-    name_prefix = optional(string) # [a-z]
     build_image = optional(string)
     subnet_ids  = optional(set(string))
 
@@ -37,11 +30,6 @@ variable "config" {
       inline_policies     = optional(map(string))
     }))
   })
-
-  validation {
-    condition     = length(regexall("^[a-zA-Z-]*$", var.config.name_prefix)) > 0
-    error_message = "`config.name_prefix` must satisfy pattern `^[a-zA-Z-]+$`."
-  }
 
   validation {
     condition     = contains(["GitHub", "Bitbucket"], try(var.config.git.credentials.provider, "GitHub"))

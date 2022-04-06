@@ -1,7 +1,7 @@
 resource "random_uuid" "external_id" {}
 
 resource "aws_iam_role" "this" {
-  name = "${local.config.name_prefix}cognito-role"
+  name = "${local.name_prefix}cognito-role"
   tags = local.default_tags
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
@@ -41,7 +41,7 @@ resource "aws_iam_role" "this" {
 }
 
 resource "aws_cognito_user_pool" "this" {
-  name = "${local.config.name_prefix}user-pool"
+  name = "${local.name_prefix}user-pool"
   tags = local.default_tags
 
   # Sign-in experience

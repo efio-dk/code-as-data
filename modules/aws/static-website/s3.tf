@@ -2,12 +2,12 @@ resource "random_pet" "this" {
   keepers = {
     account = data.aws_region.current.name
     region  = data.aws_caller_identity.current.account_id
-    name    = local.config.name_prefix
+    name    = local.name_prefix
   }
 }
 
 resource "aws_s3_bucket" "this" {
-  bucket = "${local.config.name_prefix}static-website-${random_pet.this.id}"
+  bucket = "${local.name_prefix}static-website-${random_pet.this.id}"
   tags   = local.default_tags
 }
 /*

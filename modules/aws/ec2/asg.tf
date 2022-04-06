@@ -1,6 +1,6 @@
 
 resource "aws_autoscaling_group" "this" {
-  name                 = "${local.config.name_prefix}asg"
+  name                 = "${local.name_prefix}asg"
   launch_configuration = aws_launch_configuration.this.name
   min_size             = local.config.min_size
   max_size             = local.config.max_size
@@ -23,7 +23,7 @@ resource "aws_autoscaling_group" "this" {
 
   dynamic "tag" {
     for_each = merge(local.default_tags, {
-      Name                 = "${local.config.name_prefix}asg-instance",
+      Name                 = "${local.name_prefix}asg-instance",
       ec2-instance-connect = "asg"
     })
 

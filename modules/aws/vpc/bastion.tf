@@ -20,7 +20,7 @@ resource "aws_security_group" "bastion" {
   count = local.enable_bastion
 
   description = "Enable SSH access to the bastion host from external via SSH port"
-  name        = "${local.config.name_prefix}bastion"
+  name        = "${local.name_prefix}bastion"
   vpc_id      = aws_vpc.this.id
 
   ingress {
@@ -41,7 +41,7 @@ resource "aws_security_group" "bastion" {
   }
 
   tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}bastion"
+    Name = "${local.name_prefix}bastion"
   })
 }
 
@@ -86,7 +86,7 @@ data "aws_iam_policy_document" "bastion_inline_policy" {
 resource "aws_iam_role" "bastion" {
   count = local.enable_bastion
 
-  name               = "${local.config.name_prefix}bastion-role"
+  name               = "${local.name_prefix}bastion-role"
   path               = "/"
   assume_role_policy = data.aws_iam_policy_document.bastion_assume_role[0].json
 
@@ -99,7 +99,7 @@ resource "aws_iam_role" "bastion" {
 resource "aws_iam_instance_profile" "bastion" {
   count = local.enable_bastion
 
-  name = "${local.config.name_prefix}bastion-profile"
+  name = "${local.name_prefix}bastion-profile"
   role = aws_iam_role.bastion[0].name
 }
 
@@ -118,7 +118,7 @@ resource "aws_instance" "bastion" {
   )
 
   tags = merge(local.default_tags, {
-    Name                 = "${local.config.name_prefix}bastion"
+    Name                 = "${local.name_prefix}bastion"
     ec2-instance-connect = "bastion"
     a                    = "b"
   })
@@ -142,7 +142,7 @@ resource "aws_eip" "bastion" {
 
   vpc = true
   tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}bastion"
+    Name = "${local.name_prefix}bastion"
     Type = "public"
   })
 

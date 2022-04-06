@@ -1,7 +1,7 @@
 resource "aws_codepipeline" "this" {
   for_each = local.env
 
-  name     = "${local.config.name_prefix}${each.value.app}-${each.value.env}"
+  name     = "${local.name_prefix}${each.value.app}-${each.value.env}"
   role_arn = aws_iam_role.this.arn
   tags     = local.default_tags
 

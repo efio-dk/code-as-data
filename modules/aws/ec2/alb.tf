@@ -2,7 +2,7 @@ resource "aws_security_group" "alb" {
   count = local.enable_load_balancer
 
   description = "Allow global http(s) traffic to ALB"
-  name_prefix = "${local.config.name_prefix}alb"
+  name_prefix = "${local.name_prefix}alb"
   vpc_id      = local.vpc_id
 
   ingress {
@@ -31,14 +31,14 @@ resource "aws_security_group" "alb" {
   }
 
   tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}alb"
+    Name = "${local.name_prefix}alb"
   })
 }
 
 resource "aws_lb" "this" {
   count = local.enable_load_balancer
 
-  name               = "${local.config.name_prefix}alb"
+  name               = "${local.name_prefix}alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb[0].id]
@@ -53,14 +53,14 @@ resource "aws_lb" "this" {
   # }
 
   tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}alb"
+    Name = "${local.name_prefix}alb"
   })
 }
 
 resource "aws_lb_target_group" "this" {
   count = local.enable_load_balancer
 
-  name     = "${local.config.name_prefix}alb"
+  name     = "${local.name_prefix}alb"
   port     = 80
   protocol = "HTTP"
   vpc_id   = local.vpc_id
@@ -77,7 +77,7 @@ resource "aws_lb_target_group" "this" {
   }
 
   tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}alb"
+    Name = "${local.name_prefix}alb"
   })
 }
 

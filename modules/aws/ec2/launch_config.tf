@@ -33,7 +33,7 @@ data "aws_iam_policy_document" "ec2_instance_connect_policy" {
 
 resource "aws_security_group" "launch_config" {
   description = "Enable HTTP(S) access to the application load balancer."
-  name        = "${local.config.name_prefix}asg"
+  name        = "${local.name_prefix}asg"
   vpc_id      = local.vpc_id
 
   ingress {
@@ -78,12 +78,12 @@ resource "aws_security_group" "launch_config" {
   }
 
   tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}asg"
+    Name = "${local.name_prefix}asg"
   })
 }
 
 resource "aws_iam_role" "this" {
-  name               = "${local.config.name_prefix}role"
+  name               = "${local.name_prefix}role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
   inline_policy {
     name   = "ec2_instance_connect"
@@ -93,12 +93,12 @@ resource "aws_iam_role" "this" {
 }
 
 resource "aws_iam_instance_profile" "this" {
-  name = "${local.config.name_prefix}profile"
+  name = "${local.name_prefix}profile"
   role = aws_iam_role.this.name
 }
 
 resource "aws_launch_configuration" "this" {
-  name_prefix                 = "${local.config.name_prefix}instance"
+  name_prefix                 = "${local.name_prefix}instance"
   image_id                    = data.aws_ami.this[local.config.ami].id
   instance_type               = local.config.instance_type
   iam_instance_profile        = aws_iam_instance_profile.this.id
@@ -135,7 +135,7 @@ resource "aws_launch_configuration" "this" {
       iops        = ebs_block_device.value.iops
       throughput  = ebs_block_device.value.throughput
       # tags = merge(local.default_tags, {
-      #   instance = "${local.config.name_prefix}instance"
+      #   instance = "${local.name_prefix}instance"
       # })
     }
   }

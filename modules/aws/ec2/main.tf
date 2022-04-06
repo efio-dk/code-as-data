@@ -1,7 +1,3 @@
-data "aws_region" "current" {}
-
-data "aws_caller_identity" "current" {}
-
 data "aws_subnet" "alb" {
   for_each = setunion(local.config.public_subnets, local.config.private_subnets)
 
@@ -9,13 +5,7 @@ data "aws_subnet" "alb" {
 }
 
 locals {
-  default_tags = merge(var.default_tags, {
-    "Terraform-module" : "code-as-data.com"
-    tf-workspace = terraform.workspace
-  })
-
   config = defaults(var.config, {
-    name_prefix      = "cad-"
     ami              = "amazon_linux_2"
     min_size         = 1
     max_size         = 1

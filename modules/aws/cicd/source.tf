@@ -22,7 +22,7 @@ resource "aws_codebuild_source_credential" "this" {
 resource "aws_codestarconnections_connection" "this" {
   for_each = local.config.git.connection != null ? local.config.git.connection : {}
 
-  name          = "${local.config.name_prefix}${each.key}-git-connection"
+  name          = "${local.name_prefix}${each.key}-git-connection"
   provider_type = each.value
   tags          = local.default_tags
 }

@@ -1,8 +1,3 @@
-output "debug" {
-  description = "This will be used for debug purposes only."
-  value       = local.debug
-}
-
 output "kms_key_id" {
   description = "KMS CMK used by the CI/CD module."
   value       = aws_kms_key.this.id
