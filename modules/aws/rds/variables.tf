@@ -8,17 +8,17 @@ variable "config" {
   description = ""
   type = object({
     name_prefix = optional(string) # [a-z]
-    
+
     subnet_ids = set(string)
 
-    engine = string
+    engine         = string
     engine_version = optional(string)
 
-    db_name = optional(string)
-    port = optional(number)
+    db_name       = optional(string)
+    port          = optional(number)
     instance_type = optional(string)
-    volume_size = optional(number)
-    multi_az = optional(bool)
+    volume_size   = optional(number)
+    multi_az      = optional(bool)
 
     username = optional(string)
   })

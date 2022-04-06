@@ -16,9 +16,31 @@
 #   tags = local.default_tags
 # }
 
-# resource "aws_db_subnet_group" "this" {
-#   name       = "${var.name_prefix}db-group"
-#   subnet_ids = [aws_subnet.frontend.id, aws_subnet.backend.id]
+resource "aws_db_subnet_group" "this" {
+  name       = "${var.name_prefix}db-group"
+  subnet_ids = [aws_subnet.frontend.id, aws_subnet.backend.id]
 
-#   tags = local.default_tags
+  tags = local.default_tags
+}
+
+# resource "aws_db_option_group" "this" {
+#   name                     =  "${var.name_prefix}option-group"
+#   # option_group_description = "Terraform Option Group"
+#   engine_name              = local.config.engine
+#   major_engine_version     = local.major_engine_version
+
+#   option {
+#     option_name = "MARIADB_AUDIT_PLUGIN"
+
+#     option_settings = [
+#       {
+#         name  = "SERVER_AUDIT_EVENTS"
+#         value = "CONNECT"
+#       },
+#       {
+#         name  = "SERVER_AUDIT_FILE_ROTATIONS"
+#         value = "37"
+#       },
+#     ]
+#   }
 # }
