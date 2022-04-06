@@ -20,7 +20,9 @@ resource "aws_db_subnet_group" "this" {
   name       = "${local.config.name_prefix}db-group"
   subnet_ids = local.config.subnet_ids
 
-  tags = local.default_tags
+  tags = merge(local.default_tags, {
+tmp = aws_ssm_parameter.this.value
+  })
 }
 
 # resource "aws_db_option_group" "this" {
