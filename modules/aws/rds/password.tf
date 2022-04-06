@@ -5,7 +5,7 @@ resource "random_password" "this" {
 }
 
 resource "aws_ssm_parameter" "this" {
-  name        = "/${var.name_prefix}secrets/rds-password"
+  name        = "/${local.config.name_prefix}secrets/rds-password"
   description = "The RDS master password."
   type        = "SecureString"
   value       = random_password.this.result
