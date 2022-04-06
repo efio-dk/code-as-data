@@ -6,6 +6,12 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
+data "aws_subnet" "this" {
+  for_each = local.subnet_ids
+
+  id = each.value
+}
+
 locals {
   default_tags = merge(var.default_tags, {
     "Terraform-module" : "code-as-data.com"
@@ -21,4 +27,7 @@ locals {
     multi_az = false
     username = "admin"
   })
+
+  vpc_id               = one(distinct([for subnet in data.aws_subnet.alb : subnet.vpc_id]))
+
 }
