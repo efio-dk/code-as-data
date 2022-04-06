@@ -17,7 +17,7 @@ locals {
     engine = "mysql"
     engine_version = "8.0"
     instance_type = "db.t3.small"
-    instance_volume = 30
+    volume_size = 30
     multi_az = false
     username = "admin"
   })
