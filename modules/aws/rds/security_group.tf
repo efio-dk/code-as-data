@@ -1,12 +1,12 @@
 
 resource "aws_security_group" "client" {
-  name        = "${var.name_prefix}client-sg"
+  name        = "${local.config.name_prefix}client-sg"
   description = "Securitygroup for RDS clients"
   vpc_id      = local.vpc_id
 }
 
 resource "aws_security_group" "instance" {
-  name        = "${var.name_prefix}instance-sg"
+  name        = "${local.config.name_prefix}instance-sg"
   description = "Securitygroup for RDS instances"
   vpc_id      = local.vpc_id
 
