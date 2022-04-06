@@ -26,5 +26,5 @@ sudo usermod -a -G docker ec2-user
 
 # ecr login
 %{ for command in commands ~}
-$(${command})
+${command}
 %{ endfor ~}
