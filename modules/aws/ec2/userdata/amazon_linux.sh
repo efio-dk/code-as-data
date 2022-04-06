@@ -25,10 +25,6 @@ sudo systemctl enable docker
 sudo usermod -a -G docker ec2-user
 
 # ecr login
-aws ecr get-login-password --region ${aws_region} | docker login --username AWS --password-stdin ${aws_account}.dkr.ecr.${aws_region}.amazonaws.com
-
 %{ for command in commands ~}
 $(${command})
 %{ endfor ~}
-
-docker run --name nginx -p 80:80 -d nginx
