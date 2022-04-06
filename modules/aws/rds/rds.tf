@@ -17,7 +17,7 @@
 # }
 
 resource "aws_db_subnet_group" "this" {
-  name       = "${var.name_prefix}db-group"
+  name       = "${local.config.name_prefix}db-group"
   subnet_ids = local.config.subnet_ids
 
   tags = local.default_tags
