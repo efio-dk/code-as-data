@@ -7,7 +7,7 @@ data "aws_availability_zones" "available" {
 }
 
 data "aws_subnet" "this" {
-  for_each = local.subnet_ids
+  for_each = local.config.subnet_ids
 
   id = each.value
 }
