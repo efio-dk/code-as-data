@@ -26,12 +26,12 @@ variable "config" {
 }
 
 /*
-module.nsph.module.db[0].module.db_instance.data.aws_iam_policy_document.enhanced_monitoring
-module.nsph.module.db[0].module.db_instance.data.aws_partition.current
-module.nsph.module.db[0].module.db_instance.aws_db_instance.this[0]
-module.nsph.module.db[0].module.db_instance.aws_iam_role.enhanced_monitoring[0]
-module.nsph.module.db[0].module.db_instance.aws_iam_role_policy_attachment.enhanced_monitoring[0]
-module.nsph.module.db[0].module.db_instance.random_id.snapshot_identifier[0]
-module.nsph.module.db[0].module.db_option_group.aws_db_option_group.this[0]
-module.nsph.module.db[0].module.db_parameter_group.aws_db_parameter_group.this[0]
+data.aws_iam_policy_document.enhanced_monitoring
+data.aws_partition.current
+aws_db_instance.this[0]
+aws_iam_role.enhanced_monitoring[0]
+aws_iam_role_policy_attachment.enhanced_monitoring[0]
+random_id.snapshot_identifier[0]
+aws_db_option_group.this[0]
+aws_db_parameter_group.this[0]
 */
