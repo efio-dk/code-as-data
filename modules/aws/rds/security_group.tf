@@ -12,16 +12,16 @@ resource "aws_security_group" "instance" {
 
   ingress {
     description     = "DB TCP Port"
-    from_port       = local.config.db_port
-    to_port         = local.config.db_port
+    from_port       = local.config.port
+    to_port         = local.config.port
     protocol        = "tcp"
     security_groups = [aws_security_group.client.id]
     self            = true
   }
 
   egress {
-    from_port = local.config.db_port
-    to_port   = local.config.db_port
+    from_port = local.config.port
+    to_port   = local.config.port
     protocol  = "tcp"
     self      = true
   }
