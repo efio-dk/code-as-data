@@ -120,6 +120,7 @@ resource "aws_instance" "bastion" {
   tags = merge(local.default_tags, {
     Name                 = "${local.config.name_prefix}bastion"
     ec2-instance-connect = "bastion"
+    a = "b"
   })
 
   root_block_device {
