@@ -3,34 +3,6 @@ data "aws_ip_ranges" "this" {
   services = ["ec2_instance_connect"]
 }
 
-data "aws_iam_policy_document" "assume_role_policy" {
-  statement {
-    actions = ["sts:AssumeRole"]
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
-  }
-}
-
-data "aws_iam_policy_document" "ec2_instance_connect_policy" {
-  statement {
-    actions   = ["ec2-instance-connect:SendSSHPublicKey"]
-    resources = ["arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:instance/*"]
-
-    condition {
-      test     = "StringEquals"
-      variable = "aws:ResourceTag/ec2-instance-connect"
-      values   = ["asg"]
-    }
-  }
-
-  statement {
-    actions   = ["ec2:DescribeInstances"]
-    resources = ["arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:instance/*"]
-  }
-}
-
 resource "aws_security_group" "launch_config" {
   description = "Enable HTTP(S) access to the application load balancer."
   name        = "${local.name_prefix}asg"
@@ -82,21 +54,6 @@ resource "aws_security_group" "launch_config" {
   })
 }
 
-resource "aws_iam_role" "this" {
-  name               = "${local.name_prefix}role"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
-  inline_policy {
-    name   = "ec2_instance_connect"
-    policy = data.aws_iam_policy_document.ec2_instance_connect_policy.json
-  }
-  path = "/"
-}
-
-resource "aws_iam_instance_profile" "this" {
-  name = "${local.name_prefix}profile"
-  role = aws_iam_role.this.name
-}
-
 resource "aws_launch_configuration" "this" {
   name_prefix                 = "${local.name_prefix}instance"
   image_id                    = data.aws_ami.this[local.config.ami].id
@@ -119,7 +76,6 @@ resource "aws_launch_configuration" "this" {
 
   root_block_device {
     encrypted = true
-
   }
 
   dynamic "ebs_block_device" {

@@ -21,5 +21,10 @@ variable "config" {
     public_subnets          = optional(set(string))
     trusted_ssh_public_keys = optional(set(string))
     kms_key                 = optional(string)
+
+    iam_role_permissions = optional(object({
+      managed_policies    = optional(list(string))
+      inline_policies     = optional(map(string))
+    }))
   })
 }
