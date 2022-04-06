@@ -1,4 +1,5 @@
 resource "aws_db_instance" "this" {
+  identifier = "${var.name_prefix}db"
   allocated_storage    = local.config.volume_size
   engine               = local.config.engine
   engine_version       = local.config.engine_version
