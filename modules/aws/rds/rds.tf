@@ -10,9 +10,10 @@ resource "aws_db_instance" "this" {
   # parameter_group_name = "default.mysql5.7"
   skip_final_snapshot = true
 
-  copy_tags_to_snapshot = true
-  db_subnet_group_name  = aws_db_subnet_group.this.id
-  multi_az              = local.config.multi_az
+  copy_tags_to_snapshot  = true
+  db_subnet_group_name   = aws_db_subnet_group.this.id
+  vpc_security_group_ids = [aws_security_group.instance.id]
+  multi_az               = local.config.multi_az
 
   tags = local.default_tags
 }
