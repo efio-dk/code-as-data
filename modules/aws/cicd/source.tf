@@ -25,6 +25,10 @@ resource "aws_codestarconnections_connection" "this" {
   name          = "${local.name_prefix}${each.key}-git-connection"
   provider_type = each.value
   tags          = local.default_tags
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_codebuild_webhook" "this" {
