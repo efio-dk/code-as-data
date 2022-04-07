@@ -11,7 +11,6 @@ data "aws_iam_policy_document" "ecr" {
 
   statement {
     sid       = "AllowCrossAccountPull"
-    resources = ["*"]
     actions = [
       "ecr:BatchGetImage",
       "ecr:BatchCheckLayerAvailability",
