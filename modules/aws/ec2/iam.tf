@@ -39,7 +39,7 @@ resource "aws_iam_role" "this" {
   }
 
   dynamic "inline_policy" {
-    for_each = try(local.config.iam_role_permissions.inline_policies != null ? local.config.iam_role_permissions.inline_policies : [], [])
+    for_each = try(local.config.iam_role_permissions.inline_policies != null ? local.config.iam_role_permissions.inline_policies : {}, {})
 
     content {
       name   = inline_policy.key

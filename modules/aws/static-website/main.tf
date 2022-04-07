@@ -6,4 +6,6 @@ locals {
     cache_policy           = "CachingOptimized"
     disable_cloudfront     = false
   })
+
+  provision_kms = local.config.kms_arn != null ? 1 : 0
 }

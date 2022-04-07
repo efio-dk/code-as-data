@@ -10,5 +10,6 @@ variable "config" {
     cache_policy           = optional(string)
     acm_certificate_arn    = optional(string)
     disable_cloudfront     = optional(bool)
+    kms_arn                = optional(string)
   })
 }
