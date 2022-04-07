@@ -15,6 +15,7 @@ resource "aws_cloudfront_distribution" "this" {
   default_root_object = local.config.index_document
   aliases             = [] // [local.config.domain_name]
   wait_for_deployment = false
+  comment             = "Cloudfront CDN for ${local.name_prefix}website"
   tags                = local.default_tags
 
   origin {

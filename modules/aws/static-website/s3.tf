@@ -194,5 +194,5 @@ resource "aws_s3_object" "this" {
   key          = "index.html"
   source       = "${path.module}/sample/index.html"
   content_type = "text/html"
-  # kms_key_id   = aws_kms_key.this.arn
+  kms_key_id   = aws_kms_key.this.arn
 }
