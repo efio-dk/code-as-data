@@ -3,7 +3,7 @@ resource "aws_security_group" "alb" {
 
   description = "Allow global http(s) traffic to ALB"
   name_prefix = "${local.name_prefix}alb"
-  vpc_id      = local.vpc_id
+  vpc_id      = local.config.vpc_id
 
   ingress {
     description = "Allow ingress http traffic"
@@ -55,7 +55,7 @@ resource "aws_lb_target_group" "this" {
   name     = "${local.name_prefix}alb"
   port     = 80
   protocol = "HTTP"
-  vpc_id   = local.vpc_id
+  vpc_id   = local.config.vpc_id
 
   health_check {
     enabled             = true
