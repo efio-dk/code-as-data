@@ -30,6 +30,6 @@ locals {
     tf-workspace = terraform.workspace
   })
 
-  region_name = local.region_name
-  account_id  = local.account_id
+  region_name = data.aws_region.current.name
+  account_id  = data.aws_caller_identity.current.account_id
 }
