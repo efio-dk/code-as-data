@@ -11,20 +11,20 @@ data "aws_iam_policy_document" "ecr" {
     }
   }
 
-  statement {
-    sid       = "AllowCrossAccountPull"
-    resources = ["*"]
-    actions = [
-      "ecr:BatchGetImage",
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:GetDownloadUrlForLayer",
-    ]
+  # statement {
+  #   sid       = "AllowCrossAccountPull"
+  #   resources = ["*"]
+  #   actions = [
+  #     "ecr:BatchGetImage",
+  #     "ecr:BatchCheckLayerAvailability",
+  #     "ecr:GetDownloadUrlForLayer",
+  #   ]
 
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::382888529141:root"]
-    }
-  }
+  #   principals {
+  #     type        = "AWS"
+  #     identifiers = ["arn:aws:iam::382888529141:root"]
+  #   }
+  # }
 
   // https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-policy-examples.html
   /*<<EOF
