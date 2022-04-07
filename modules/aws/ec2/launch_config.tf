@@ -6,7 +6,7 @@ data "aws_ip_ranges" "this" {
 resource "aws_security_group" "launch_config" {
   description = "Enable HTTP(S) access to the application load balancer."
   name        = "${local.name_prefix}asg"
-  vpc_id      = local.vpc_id
+  vpc_id      = local.config.vpc_id
 
   ingress {
     description = "Allow ingress SSH from ec2 instance connect."
