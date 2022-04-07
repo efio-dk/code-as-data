@@ -106,4 +106,9 @@ resource "aws_lb_listener" "this" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.this[0].arn
   }
+
+  depends_on = [
+    aws_lb.this[0].arn,
+    aws_lb_target_group.this[0].arn
+  ]
 }
