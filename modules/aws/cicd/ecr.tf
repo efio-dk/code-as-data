@@ -75,11 +75,10 @@ resource "aws_ecr_repository" "this" {
     scan_on_push = true
   }
 }
-/*
-resource "aws_ecr_repository_policy" "this" {
-  for_each = { for k, v in local.action : k => v if v.ecr }
 
-  repository = aws_ecr_repository.this[each.key].name
+resource "aws_ecr_repository_policy" "this" {
+  for_each = aws_ecr_repository.this
+
+  repository = each.value.name
   policy     = data.aws_iam_policy_document.ecr.json
 }
-*/
