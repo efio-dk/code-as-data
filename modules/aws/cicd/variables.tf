@@ -29,6 +29,12 @@ variable "config" {
       managed_policies    = optional(list(string))
       inline_policies     = optional(map(string))
     }))
+
+    ecr_permissions = optional(map(object({
+      account_id = string
+      pull = boolean
+      push = boolean
+    })))
   })
 
   validation {
@@ -108,5 +114,3 @@ variable "applications" {
   #   error_message = "\"applications\" has invalid combination of \"git\", \"branching_strategy\", \"branch\" and \"webhook\"."
   # }
 }
-
-// kun et bootstrap action
