@@ -60,12 +60,14 @@ resource "aws_security_group" "nat_instance" {
 resource "aws_instance" "nat_instance" {
   count = local.config.nat_mode == "single_nat_instance" ? 1 : 0
 
-  ami                    = data.aws_ami.nat_instance.id
-  instance_type          = "t3.nano"
-  subnet_id              = aws_subnet.this["public-0"].id
-  vpc_security_group_ids = [aws_security_group.nat_instance[0].id]
-  source_dest_check      = false
-  monitoring             = true
+  ami                     = data.aws_ami.nat_instance.id
+  instance_type           = "t3.nano"
+  subnet_id               = aws_subnet.this["public-0"].id
+  vpc_security_group_ids  = [aws_security_group.nat_instance[0].id]
+  source_dest_check       = false
+  monitoring              = true
+  disable_api_termination = true
+
 
   tags = merge(local.default_tags, {
     Name = "${local.name_prefix}nat-instance"
