@@ -1,8 +1,8 @@
 resource "random_pet" "this" {
   prefix = "${local.name_prefix}artifact"
   keepers = {
-    account = local.region_name
-    region  = local.account_id
+    account = local.account_id
+    region  = local.region_name
     name    = local.name_prefix
   }
 }

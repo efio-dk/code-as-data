@@ -44,14 +44,6 @@ resource "aws_lb" "this" {
   security_groups    = [aws_security_group.alb[0].id]
   subnets            = local.config.public_subnets
 
-  # enable_deletion_protection = true
-
-  # access_logs {
-  #   bucket  = aws_s3_bucket.lb_logs.bucket
-  #   prefix  = "test-lb"
-  #   enabled = true
-  # }
-
   tags = merge(local.default_tags, {
     Name = "${local.name_prefix}alb"
   })
