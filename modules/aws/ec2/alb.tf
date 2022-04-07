@@ -108,7 +108,7 @@ resource "aws_lb_listener" "this" {
   }
 
   depends_on = [
-    aws_lb.this[0].arn,
-    aws_lb_target_group.this[0].arn
+    aws_lb.this,
+    aws_lb_target_group.this
   ]
 }
