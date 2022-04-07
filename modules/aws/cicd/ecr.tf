@@ -16,13 +16,12 @@ data "aws_iam_policy_document" "ecr" {
       sid = "AllowCrossAccountPull"
       actions = [
         "ecr:BatchGetImage",
-        "ecr:BatchCheckLayerAvailability",
         "ecr:GetDownloadUrlForLayer",
       ]
 
       principals {
         type        = "AWS"
-        identifiers = ["arn:aws:iam::${statement.account_id}:root"]
+        identifiers = ["arn:aws:iam::${statement.value.account_id}:root"]
       }
     }
   }
@@ -42,7 +41,7 @@ data "aws_iam_policy_document" "ecr" {
 
       principals {
         type        = "AWS"
-        identifiers = ["arn:aws:iam::${statement.account_id}:root"]
+        identifiers = ["arn:aws:iam::${statement.value.account_id}:root"]
       }
     }
   }
