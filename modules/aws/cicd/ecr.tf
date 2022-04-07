@@ -85,9 +85,9 @@ resource "aws_ecr_repository" "this" {
   }
 }
 
-# resource "aws_ecr_repository_policy" "this" {
-#   for_each = aws_ecr_repository.this
+resource "aws_ecr_repository_policy" "this" {
+  for_each = aws_ecr_repository.this
 
-#   repository = each.value.name
-#   policy     = data.aws_iam_policy_document.ecr.json
-# }
+  repository = each.value.name
+  policy     = data.aws_iam_policy_document.ecr.json
+}
