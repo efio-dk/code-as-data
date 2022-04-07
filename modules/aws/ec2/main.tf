@@ -1,9 +1,3 @@
-data "aws_subnet" "alb" {
-  for_each = setunion(local.config.public_subnets, local.config.private_subnets)
-
-  id = each.value
-}
-
 locals {
   config = defaults(var.config, {
     ami              = "amazon_linux_2"
@@ -30,6 +24,5 @@ locals {
     }
   }
 
-  vpc_id               = one(distinct([for subnet in data.aws_subnet.alb : subnet.vpc_id]))
   enable_load_balancer = local.config.public_subnets != null && length(local.config.public_subnets) > 0 ? 1 : 0
 }

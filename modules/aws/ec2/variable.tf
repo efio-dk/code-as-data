@@ -17,6 +17,7 @@ variable "config" {
     max_size         = optional(number)
     desired_capacity = optional(number)
 
+    vpc_id = string
     private_subnets         = set(string)
     public_subnets          = optional(set(string))
     trusted_ssh_public_keys = optional(set(string))
