@@ -1,9 +1,10 @@
 locals {
   config = defaults(var.config, {
-    ami              = "amazon_linux_2"
-    min_size         = 1
-    max_size         = 1
-    desired_capacity = 1
+    ami                  = "amazon_linux_2"
+    min_size             = 1
+    max_size             = 1
+    desired_capacity     = 1
+    enable_load_balancer = true
   })
 
   ami = {
@@ -24,5 +25,5 @@ locals {
     }
   }
 
-  enable_load_balancer = local.config.public_subnets != null && length(local.config.public_subnets) > 0 ? 1 : 0
+  enable_load_balancer = local.enable_load_balancer ? 1 : 0
 }

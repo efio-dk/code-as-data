@@ -17,11 +17,12 @@ variable "config" {
     max_size         = optional(number)
     desired_capacity = optional(number)
 
-    vpc_id = string
+    vpc_id                  = string
     private_subnets         = set(string)
     public_subnets          = optional(set(string))
     trusted_ssh_public_keys = optional(set(string))
     kms_key                 = optional(string)
+    enable_load_balancer    = optional(bool)
 
     iam_role_permissions = optional(object({
       managed_policies = optional(list(string))
