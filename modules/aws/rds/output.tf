@@ -13,3 +13,7 @@ output "username" {
 output "password_ssm_key" {
   value = aws_ssm_parameter.this.name
 }
+
+output "db_name" {
+  value = aws_db_instance.this.db_name
+}
