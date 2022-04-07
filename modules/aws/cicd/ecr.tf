@@ -9,23 +9,43 @@ data "aws_iam_policy_document" "ecr" {
     }
   }
 
-  statement {
-    sid = "AllowCrossAccountPull"
-    actions = [
-      "ecr:BatchGetImage",
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:GetDownloadUrlForLayer",
-    ]
+  dynamic "statement" {
+    for_each = { for k, v in local.config.ecr_permissions : k => v if v.pull }
 
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::382888529141:root"]
+    content {
+      sid = "AllowCrossAccountPull"
+      actions = [
+        "ecr:BatchGetImage",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+      ]
+
+      principals {
+        type        = "AWS"
+        identifiers = ["arn:aws:iam::${statement.account_id}:root"]
+      }
     }
   }
 
-  // https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-policy-examples.html
+  dynamic "statement" {
+    for_each = { for k, v in local.config.ecr_permissions : k => v if v.push }
 
+    content {
+      sid = "AllowCrossAccountPush"
+      actions = [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:CompleteLayerUpload",
+        "ecr:InitiateLayerUpload",
+        "ecr:PutImage",
+        "ecr:UploadLayerPart"
+      ]
 
+      principals {
+        type        = "AWS"
+        identifiers = ["arn:aws:iam::${statement.account_id}:root"]
+      }
+    }
+  }
 }
 
 resource "aws_ecr_repository" "this" {

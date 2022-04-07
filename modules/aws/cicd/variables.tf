@@ -32,8 +32,8 @@ variable "config" {
 
     ecr_permissions = optional(map(object({
       account_id = string
-      pull = boolean
-      push = boolean
+      pull       = boolean
+      push       = boolean
     })))
   })
 
