@@ -8,7 +8,7 @@ resource "aws_security_group" "client" {
 resource "aws_security_group" "instance" {
   name        = "${local.name_prefix}instance-sg"
   description = "Securitygroup for RDS instances"
-  vpc_id      = local.vpc_id
+  vpc_id      = local.config.vpc_id
 
   ingress {
     description     = "DB TCP Port"
