@@ -35,11 +35,7 @@ output "bastion_sg" {
 }
 
 output "kms_arn" {
-  value = local.kms_arn
-}
-
-output "kms_id" {
-  value = aws_kms_key.this.id
+  value = aws_kms_key.this.arn
 }
 
 output "kms_alias" {
