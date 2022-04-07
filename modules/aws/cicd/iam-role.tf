@@ -40,9 +40,9 @@ resource "aws_iam_role" "this" {
       #       "iam:*"
       #     ],
       #     "Resource" : [
-      #       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*",
-      #       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/*",
-      #       "arn:aws:ecr::${data.aws_caller_identity.current.account_id}:instance-profile/*"
+      #       "arn:aws:iam::${local.account_id}:role/*",
+      #       "arn:aws:iam::${local.account_id}:policy/*",
+      #       "arn:aws:ecr::${local.account_id}:instance-profile/*"
       #     ] # TODO - consider adding boundaty permissions to avoid creating a user
       #   }
       # ]
@@ -65,9 +65,9 @@ resource "aws_iam_role" "this" {
               "iam:*"
             ],
             "Resource" : [
-              "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*",
-              "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/*",
-              "arn:aws:ecr::${data.aws_caller_identity.current.account_id}:instance-profile/*"
+              "arn:aws:iam::${local.account_id}:role/*",
+              "arn:aws:iam::${local.account_id}:policy/*",
+              "arn:aws:ecr::${local.account_id}:instance-profile/*"
             ]
           }
         ]

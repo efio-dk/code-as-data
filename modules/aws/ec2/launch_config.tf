@@ -1,5 +1,5 @@
 data "aws_ip_ranges" "this" {
-  regions  = [data.aws_region.current.name]
+  regions  = [local.region_name]
   services = ["ec2_instance_connect"]
 }
 
@@ -68,8 +68,8 @@ resource "aws_launch_configuration" "this" {
 
   user_data = templatefile("${path.module}/userdata/${local.ami[local.config.ami].userdata}", {
     ssh_keys    = local.config.trusted_ssh_public_keys
-    aws_account = data.aws_caller_identity.current.account_id
-    aws_region  = data.aws_region.current.name
+    aws_account = local.account_id
+    aws_region  = local.region_name
     volumes     = local.config.volumes
     commands    = local.config.init_commands
   })

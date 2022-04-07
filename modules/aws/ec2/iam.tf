@@ -11,7 +11,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
 data "aws_iam_policy_document" "ec2_instance_connect_policy" {
   statement {
     actions   = ["ec2-instance-connect:SendSSHPublicKey"]
-    resources = ["arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:instance/*"]
+    resources = ["arn:aws:ec2:${local.region_name}:${local.account_id}:instance/*"]
 
     condition {
       test     = "StringEquals"
@@ -22,7 +22,7 @@ data "aws_iam_policy_document" "ec2_instance_connect_policy" {
 
   statement {
     actions   = ["ec2:DescribeInstances"]
-    resources = ["arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:instance/*"]
+    resources = ["arn:aws:ec2:${local.region_name}:${local.account_id}:instance/*"]
   }
 }
 

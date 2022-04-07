@@ -29,4 +29,7 @@ locals {
     tf-module : "code-as-data.com"
     tf-workspace = terraform.workspace
   })
+
+  region_name = local.region_name
+  account_id  = local.account_id
 }

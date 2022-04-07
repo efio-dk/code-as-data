@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "ecr" {
   }
 
   statement {
-    sid       = "AllowCrossAccountPull"
+    sid = "AllowCrossAccountPull"
     actions = [
       "ecr:BatchGetImage",
       "ecr:BatchCheckLayerAvailability",

@@ -85,8 +85,8 @@ resource "aws_codebuild_project" "action" {
   source {
     type = "CODEPIPELINE"
     buildspec = templatefile("${path.module}/buildspec/${each.key}.yaml", {
-      aws_account = data.aws_caller_identity.current.account_id
-      aws_region  = data.aws_region.current.name
+      aws_account = local.account_id
+      aws_region  = local.region_name
     })
   }
 

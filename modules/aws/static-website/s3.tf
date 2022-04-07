@@ -1,7 +1,7 @@
 resource "random_pet" "this" {
   keepers = {
-    account = data.aws_region.current.name
-    region  = data.aws_caller_identity.current.account_id
+    account = local.region_name
+    region  = local.account_id
     name    = local.name_prefix
   }
 }
