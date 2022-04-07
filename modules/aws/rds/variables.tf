@@ -1,6 +1,7 @@
 variable "config" {
   description = ""
   type = object({
+    vpc_id     = string
     subnet_ids = set(string)
 
     engine         = string

@@ -1,8 +1,3 @@
-data "aws_subnet" "this" {
-  for_each = local.config.subnet_ids
-
-  id = each.value
-}
 
 locals {
   config = defaults(var.config, {
@@ -14,8 +9,6 @@ locals {
     multi_az       = false
     username       = "admin"
   })
-
-  vpc_id = one(distinct([for subnet in data.aws_subnet.this : subnet.vpc_id]))
 
   major_engine_version = split(".", local.config.engine_version)[0]
 }
