@@ -8,9 +8,9 @@ output "s3_website_domain" {
   value       = aws_s3_bucket_website_configuration.this.website_endpoint
 }
 
-output "kms_id" {
-  description = "The id of the KMS Key."
-  value       = aws_kms_key.this.id
+output "kms_arn" {
+  description = "The ARN of the KMS Key."
+  value       = local.kms_arn
 }
 
 output "cloudfront_id" {

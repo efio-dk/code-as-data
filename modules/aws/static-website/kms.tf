@@ -35,6 +35,8 @@ data "aws_iam_policy_document" "kms" {
 }
 
 resource "aws_kms_key" "this" {
+  count = local.provision_kms
+
   description         = "KMS CMK used by ${local.name_prefix}solution."
   enable_key_rotation = true
   policy              = data.aws_iam_policy_document.kms.json
@@ -44,6 +46,8 @@ resource "aws_kms_key" "this" {
 }
 
 resource "aws_kms_alias" "this" {
+  count = local.provision_kms
+
   name          = "alias/${local.name_prefix}kms-cmk"
-  target_key_id = aws_kms_key.this.key_id
+  target_key_id = aws_kms_key.this[0].key_id
 }

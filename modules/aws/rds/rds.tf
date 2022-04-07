@@ -1,14 +1,12 @@
 resource "aws_db_instance" "this" {
-  identifier          = "${local.name_prefix}db"
-  allocated_storage   = local.config.volume_size
-  engine              = local.config.engine
-  engine_version      = local.config.engine_version
-  instance_class      = local.config.instance_type
-  db_name             = local.config.db_name
-  username            = local.config.username
-  password            = aws_ssm_parameter.this.value
-  skip_final_snapshot = true
-
+  identifier             = "${local.name_prefix}db"
+  allocated_storage      = local.config.volume_size
+  engine                 = local.config.engine
+  engine_version         = local.config.engine_version
+  instance_class         = local.config.instance_type
+  db_name                = local.config.db_name
+  username               = local.config.username
+  password               = aws_ssm_parameter.this.value
   copy_tags_to_snapshot  = true
   db_subnet_group_name   = aws_db_subnet_group.this.id
   vpc_security_group_ids = [aws_security_group.instance.id]
