@@ -10,7 +10,7 @@ output "alb_arn" {
 
 output "alb_ecurity_group_id" {
   description = ""
-  value       = local.enable_load_balancer > 0 ? aws_security_group[0].alb.id : null
+  value       = local.enable_load_balancer > 0 ? aws_security_group.alb[0].id : null
 }
 
 output "iam_role_arn" {
