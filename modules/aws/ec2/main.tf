@@ -25,5 +25,5 @@ locals {
     }
   }
 
-  enable_load_balancer = local.enable_load_balancer ? 1 : 0
+  enable_load_balancer = local.config.enable_load_balancer ? 1 : 0
 }
