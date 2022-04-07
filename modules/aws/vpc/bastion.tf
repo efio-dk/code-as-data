@@ -106,12 +106,13 @@ resource "aws_iam_instance_profile" "bastion" {
 resource "aws_instance" "bastion" {
   count = local.enable_bastion
 
-  ami                  = data.aws_ami.bastion[0].id
-  instance_type        = "t3.nano"
-  subnet_id            = aws_subnet.this["public-0"].id
-  iam_instance_profile = aws_iam_instance_profile.bastion[0].id
-  monitoring           = true
-  user_data            = templatefile("${path.module}/userdata.sh", { ssh_keys = local.config.trusted_ssh_public_keys })
+  ami                     = data.aws_ami.bastion[0].id
+  instance_type           = "t3.nano"
+  subnet_id               = aws_subnet.this["public-0"].id
+  iam_instance_profile    = aws_iam_instance_profile.bastion[0].id
+  disable_api_termination = true
+  monitoring              = true
+  user_data               = templatefile("${path.module}/userdata.sh", { ssh_keys = local.config.trusted_ssh_public_keys })
 
   vpc_security_group_ids = setunion([aws_security_group.bastion[0].id],
     local.config.bastion_security_groups
