@@ -16,6 +16,7 @@ variable "config" {
     min_size         = optional(number)
     max_size         = optional(number)
     desired_capacity = optional(number)
+    health_check     = optional(string)
 
     vpc_id                  = string
     private_subnets         = set(string)

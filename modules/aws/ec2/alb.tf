@@ -62,7 +62,7 @@ resource "aws_lb_target_group" "this" {
     healthy_threshold   = 3
     interval            = 30
     matcher             = "200-299"
-    path                = "/health"
+    path                = local.config.health_check
     port                = 80
     timeout             = 10
     unhealthy_threshold = 3
