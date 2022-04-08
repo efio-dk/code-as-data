@@ -17,3 +17,7 @@ output "password_ssm_key" {
 output "db_name" {
   value = aws_db_instance.this.db_name
 }
+
+output "client_security_group" {
+  value = aws_security_group.client.id
+}

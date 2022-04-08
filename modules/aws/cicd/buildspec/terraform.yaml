@@ -8,11 +8,14 @@ env:
 phases:
   install:
     commands:
-      - echo Starting the Docker daemon...
-      - /usr/local/bin/dockerd-entrypoint.sh
+      - cd $SRC
+      - tfswitch
+
   pre_build:
     commands:
-      - echo pre_build
+      - terrascan init
+      - terrascan scan
+
   build:
     commands:
-      - echo build
+      - terraform apply -var-file=${ENV}.tfvars -auto-approve

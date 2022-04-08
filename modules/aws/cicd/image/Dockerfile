@@ -46,6 +46,8 @@ RUN set -ex \
     && docker-compose version
 # ==== Docker 20.10.9 END ====
 
+RUN curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh | bash
+
 # ==== Terraform ====
 # https://releases.hashicorp.com/terraform/1.1.2/terraform_1.1.2_SHA256SUMS
 ENV TF_BUCKET="releases.hashicorp.com" \
