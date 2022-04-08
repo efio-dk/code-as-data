@@ -25,7 +25,7 @@ locals {
     main_develop : {
       branch : {
         prod  = try(local.config.git.default.main_branch != null ? local.config.git.default.main_branch : "main", "main")
-        stage = try(local.config.git.default.develop_branch != null ? local.config.git.default.develop_branch : "development", "development")
+        stage = try(local.config.git.default.develop_branch != null ? local.config.git.default.develop_branch : "develop", "develop")
       }
       webhook : {}
     }
