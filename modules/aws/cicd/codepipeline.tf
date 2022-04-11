@@ -1,7 +1,7 @@
 resource "aws_codepipeline" "this" {
-  for_each = local.env
+  for_each = local.pipeline
 
-  name     = "${local.name_prefix}${each.value.app}-${each.value.env}"
+  name     = "${local.name_prefix}${each.value.application}-${each.value.environment}"
   role_arn = aws_iam_role.this.arn
   tags     = local.default_tags
 
@@ -19,29 +19,10 @@ resource "aws_codepipeline" "this" {
     name = "Source"
 
     dynamic "action" {
-      for_each = length([for k, v in local.env : v if k == each.key && v.source == "s3"]) > 0 ? [1] : []
+      for_each = { for k, v in local.pipeline : k => v if k == each.key && v.source == "git" }
 
       content {
-        name             = "codebuild-s3"
-        category         = "Source"
-        owner            = "AWS"
-        provider         = "S3"
-        version          = "1"
-        output_artifacts = ["source_output"]
-        namespace        = "ns_git_source"
-
-        configuration = {
-          S3Bucket    = aws_s3_bucket.this.id
-          S3ObjectKey = "source-${each.value.app}-${each.value.env}.zip"
-        }
-      }
-    }
-
-    dynamic "action" {
-      for_each = { for k, v in local.env : k => v if k == each.key && v.source == "codestar" }
-
-      content {
-        name             = "${action.value.branch}@${action.value.repository}"
+        name             = "${action.value.trigger}@${local.application[action.value.application].git.repository}"
         category         = "Source"
         owner            = "AWS"
         provider         = "CodeStarSourceConnection"
@@ -50,22 +31,42 @@ resource "aws_codepipeline" "this" {
         namespace        = "ns_git_source"
 
         configuration = {
-          ConnectionArn    = aws_codestarconnections_connection.this[action.value.git].arn
-          FullRepositoryId = "${action.value.owner}/${action.value.repository}"
-          BranchName       = action.value.branch
+          ConnectionArn    = aws_codestarconnections_connection.this[local.application[action.value.application].git.connection].arn
+          FullRepositoryId = "${local.application[action.value.application].git.owner}/${local.application[action.value.application].git.repository}"
+          BranchName       = action.value.trigger
         }
       }
     }
+
+    dynamic "action" {
+      for_each = { for k, v in local.pipeline : k => v if k == each.key && v.source == "s3" }
+
+      content {
+        name             = "${action.value.trigger}@${local.application[action.value.application].s3.bucket}"
+        category         = "Source"
+        owner            = "AWS"
+        provider         = "S3"
+        version          = "1"
+        output_artifacts = ["source_output"]
+        namespace        = "ns_s3_source"
+
+        configuration = {
+          S3Bucket    = local.application[action.value.application].s3.bucket
+          S3ObjectKey = action.value.trigger
+        }
+      }
+    }
+
   }
 
   dynamic "stage" {
-    for_each = length({ for k, v in local.action : k => v if v.app == each.value.app && v.stage == "build" }) > 0 ? [1] : []
+    for_each = length({ for k, v in local.action : k => v if v.application == each.value.application && v.stage == "build" }) > 0 ? [1] : []
 
     content {
       name = "Build"
 
       dynamic "action" {
-        for_each = { for k, v in local.action : k => v if v.app == each.value.app && v.stage == "build" }
+        for_each = { for k, v in local.action : k => v if v.application == each.value.application && v.stage == "build" }
 
         content {
           name            = action.value.action
@@ -82,17 +83,17 @@ resource "aws_codepipeline" "this" {
             EnvironmentVariables = jsonencode([
               {
                 "name" : "SRC",
-                "value" : local.app[action.value.app].action[action.value.action].src,
+                "value" : local.application[action.value.application].action[action.value.action].src,
                 "type" : "PLAINTEXT"
               },
               {
                 "name" : "DST",
-                "value" : action.value.ecr ? aws_ecr_repository.this[action.key].repository_url : local.app[action.value.app].action[action.value.action].dst,
+                "value" : action.value.ecr ? aws_ecr_repository.this[action.key].repository_url : local.application[action.value.application].action[action.value.action].dst,
                 "type" : "PLAINTEXT"
               },
               {
                 "name" : "ARGS",
-                "value" : local.app[action.value.app].action[action.value.action].args,
+                "value" : local.application[action.value.application].action[action.value.action].args,
                 "type" : "PLAINTEXT"
               },
             ])

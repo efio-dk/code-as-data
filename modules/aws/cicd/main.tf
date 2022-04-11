@@ -1,6 +1,4 @@
 locals {
-  git_main_branch = try(local.config.git.default.main_branch != null ? local.config.git.default.main_branch : "main", "main")
-
   git_provider_map = {
     "github" : "GitHub"
     "github.com" : "GitHub"
@@ -9,74 +7,11 @@ locals {
     "s3" : "s3"
   }
 
-  git_branching_strategy_map = {
-    none : {
-      branch : {}
-      webhook : {}
-    }
-
-    single_branch : {
-      branch : {
-        prod = local.git_main_branch
-      }
-      webhook : {}
-    }
-
-    main_develop : {
-      branch : {
-        prod  = try(local.config.git.default.main_branch != null ? local.config.git.default.main_branch : "main", "main")
-        stage = try(local.config.git.default.develop_branch != null ? local.config.git.default.develop_branch : "develop", "develop")
-      }
-      webhook : {}
-    }
-
-    pull_request : {
-      branch : {}
-      webhook : {
-        prod = {
-          event    = "PUSH"
-          head_ref = "^refs/heads/${local.git_main_branch}"
-          base_ref = null
-        }
-        stage = {
-          event    = "PULL_REQUEST_CREATED,PULL_REQUEST_UPDATED,PULL_REQUEST_REOPENED"
-          head_ref = "^refs/heads/*"
-          base_ref = "^refs/heads/${local.git_main_branch}"
-        }
-      }
-    }
-
-    tagging : {
-      branch : {}
-      webhook : {
-        prod = {
-          event    = "PUSH"
-          head_ref = "^refs/tags/v*"
-          base_ref = null
-        }
-        stage = {
-          event    = "PUSH"
-          head_ref = "^refs/heads/*"
-          base_ref = null
-        }
-      }
-    }
-  }
-
   type_stage_map = {
     bootstrap : "build"
     docker_build : "build"
     silent_terraform : "deploy"
     terraform_deploy : "deploy"
-    // tf plan
-    // manual approve
-    // tf apply
-
-    // build
-    // test
-    // release
-    // deploy
-    // validation
   }
 
   config = defaults(var.config, {
@@ -88,15 +23,20 @@ locals {
     flatten(regexall("(github.com|bitbucket.org)[:\\/]([^\\/]+)\\/([^\\/]+)\\.git", v.git_repository_url))
   }
 
-  app = { for k, v in var.applications : k => {
-    provider           = local.git_repository_breakdown[k][0]
-    owner              = local.git_repository_breakdown[k][1]
-    repository         = local.git_repository_breakdown[k][2]
-    git                = v.git
-    branching_strategy = v.branching_strategy != null ? v.branching_strategy : "none"
-    branch             = contains(["custom", "none"], v.branching_strategy) ? v.branch : local.git_branching_strategy_map[v.branching_strategy].branch
-    webhook            = v.branching_strategy == "custom" ? v.webhook : local.git_branching_strategy_map[v.branching_strategy].webhook
-    action = { for name, val in v.action : name => {
+  application = { for app_name, app in var.applications : app_name => {
+
+    git = {
+      provider   = local.git_repository_breakdown[app_name][0]
+      owner      = local.git_repository_breakdown[app_name][1]
+      repository = local.git_repository_breakdown[app_name][2]
+      connection = coalesce(app.git_connection, one(keys(local.config.git_connection)))
+      trigger    = coalesce(app.git_trigger, { single = "main" })
+    }
+    s3 = {
+      bucket  = app.s3_bucket
+      trigger = app.s3_trigger
+    }
+    action = { for name, val in app.action : name => {
       type      = val.type
       src       = val.source
       dst       = val.target != null ? val.target : ""
@@ -106,38 +46,32 @@ locals {
     } }
   } }
 
-  env = { for e in flatten([for app_name, app in local.app : setunion(
-    [for env, webhook in app.webhook : {
-      app    = app_name
-      env    = env
-      source = "s3"
-
-      provider   = local.git_repository_breakdown[app_name][0]
-      owner      = local.git_repository_breakdown[app_name][1]
-      repository = local.git_repository_breakdown[app_name][2]
-      webhook    = webhook
+  pipeline = { for e in flatten([for app_name, app in local.application : setunion(
+    [for name, branch in coalesce(app.git.trigger, {}) : {
+      source      = "git"
+      application = app_name
+      environment = name
+      trigger     = branch
     }],
-    [for env, branch in app.branch : {
-      app        = app_name
-      env        = env
-      source     = "codestar"
-      git        = app.git
-      owner      = local.git_repository_breakdown[app_name][1]
-      repository = local.git_repository_breakdown[app_name][2]
-      branch     = branch
-    }])]) : "${e.app}/${e.env}" => e
+    [for name, objectkey in coalesce(app.s3.trigger, {}) : {
+      source      = "s3"
+      application = app_name
+      environment = name
+      trigger     = objectkey
+    }]
+
+    )]) : "${e.application}/${e.environment}" => e
   }
 
   action = { for a in flatten([
-    for app_name, app in local.app : [
+    for app_name, app in local.application : [
       for action_name, action in app.action : {
-        app    = app_name
-        action = action_name
-        stage  = action.stage
-        source = try(length(app.webhook) > 0 ? "s3" : "codestar", "codestar")
-        type   = action.type
-        ecr    = contains(["bootstrap", "docker_build"], action.type) && try(length(action.dst) == 0, true)
-    }]]) : "${a.app}/${a.stage}/${a.action}" => a
+        application = app_name
+        action      = action_name
+        stage       = action.stage
+        type        = action.type
+        ecr         = contains(["bootstrap", "docker_build"], action.type) && try(length(action.dst) == 0, true)
+    }]]) : "${a.application}/${a.stage}/${a.action}" => a
   }
 
   build_image = local.config.build_image != null ? local.config.build_image : one([for k, v in local.action : "${aws_ecr_repository.this[k].repository_url}:latest" if v.ecr && v.type == "bootstrap"])

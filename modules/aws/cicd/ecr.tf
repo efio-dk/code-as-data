@@ -50,7 +50,7 @@ data "aws_iam_policy_document" "ecr" {
 resource "aws_ecr_repository" "this" {
   for_each = { for k, v in local.action : k => v if v.ecr }
 
-  name                 = "${local.name_prefix}${each.value.app}-${each.value.action}"
+  name                 = "${local.name_prefix}${each.value.application}-${each.value.action}"
   image_tag_mutability = "MUTABLE"
   tags                 = local.default_tags
 

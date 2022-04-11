@@ -17,8 +17,3 @@ output "git_connection_status" {
   description = "The status of CodeStar connections. Use web console to update pending connections."
   value       = { for k, v in aws_codestarconnections_connection.this : v.name => v.connection_status }
 }
-
-output "codebuild_webhook_url" {
-  description = "The url of the codebuild webhook."
-  value       = { for k, v in aws_codebuild_webhook.this : k => v.url }
-}
