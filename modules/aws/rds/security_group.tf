@@ -1,12 +1,16 @@
 
 resource "aws_security_group" "client" {
-  name        = "${local.name_prefix}client-sg"
+  name        = "${local.name_prefix}db-client-sg"
   description = "Securitygroup for RDS clients"
   vpc_id      = local.config.vpc_id
+
+  tags = merge(local.default_tags, {
+    Name = "${local.name_prefix}db-client-sg"
+  })
 }
 
 resource "aws_security_group" "instance" {
-  name        = "${local.name_prefix}instance-sg"
+  name        = "${local.name_prefix}db-instance-sg"
   description = "Securitygroup for RDS instances"
   vpc_id      = local.config.vpc_id
 
@@ -25,4 +29,8 @@ resource "aws_security_group" "instance" {
     protocol  = "tcp"
     self      = true
   }
+
+  tags = merge(local.default_tags, {
+    Name = "${local.name_prefix}db-instance-sg"
+  })
 }
