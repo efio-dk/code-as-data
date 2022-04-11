@@ -30,17 +30,20 @@ locals {
       connection = coalesce(app.git_connection, one(keys(local.config.git_connection)))
       trigger    = coalesce(app.git_trigger, { single = "main" })
     } : null
-    s3 = {
+    s3 = app.s3_bucket != null ? {
       bucket  = app.s3_bucket
       trigger = app.s3_trigger
-    }
+    } : null
     action = { for name, val in app.action : name => {
       type      = val.type
       src       = val.source
-      dst       = val.target != null ? val.target : ""
-      args      = val.custom_args != null ? val.custom_args : ""
+      dst       = coalescee(val.target, "")
+      args      = coalescee(val.custom_args, "")
       stage     = local.type_stage_map[val.type]
-      run_order = val.run_order != null ? val.run_order : 1
+      run_order = coalescee(val.run_order, 1)
+      # dst       = val.target != null ? val.target : ""
+      # args      = val.custom_args != null ? val.custom_args : ""
+      # run_order = val.run_order != null ? val.run_order : 1
     } }
   } }
 
