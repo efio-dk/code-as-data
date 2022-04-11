@@ -28,7 +28,7 @@ resource "aws_codepipeline" "this" {
         provider         = "CodeStarSourceConnection"
         version          = "1"
         output_artifacts = ["source_output"]
-        namespace        = "ns_git_source"
+        namespace        = "ns_source"
 
         configuration = {
           ConnectionArn    = aws_codestarconnections_connection.this[local.application[action.value.application].git.connection].arn
@@ -48,11 +48,30 @@ resource "aws_codepipeline" "this" {
         provider         = "S3"
         version          = "1"
         output_artifacts = ["source_output"]
-        namespace        = "ns_s3_source"
+        namespace        = "ns_source"
 
         configuration = {
           S3Bucket    = local.application[action.value.application].s3.bucket
           S3ObjectKey = action.value.trigger
+        }
+      }
+    }
+
+    dynamic "action" {
+      for_each = { for k, v in local.pipeline : k => v if k == each.key && v.source == "ecr" }
+
+      content {
+        name             = "${action.value.trigger}@${local.application[action.value.application].ecr.repository}"
+        category         = "Source"
+        owner            = "AWS"
+        provider         = "ECR"
+        version          = "1"
+        output_artifacts = ["source_output"]
+        namespace        = "ns_source"
+
+        configuration = {
+          RepositoryName = local.application[action.value.application].ecr.repository
+          ImageTag       = action.value.trigger
         }
       }
     }

@@ -49,7 +49,8 @@ variable "applications" {
     git_trigger        = optional(map(string))
     s3_bucket          = optional(string)
     s3_trigger         = optional(map(string))
-    # ecr_repository     = optional(string)
+    ecr_repository     = optional(string)
+    ecr_trigger        = optional(map(string))
 
     action = optional(map(object({
       stage       = optional(string)

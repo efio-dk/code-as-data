@@ -34,6 +34,10 @@ locals {
       bucket  = app.s3_bucket
       trigger = app.s3_trigger
     } : null
+    ecr = app.ecr_repository != null ? {
+      repository = app.ecr_repository
+      trigger    = app.ecr_trigger
+    } : null
     action = { for name, val in app.action : name => {
       type      = val.type
       src       = val.source
@@ -59,6 +63,12 @@ locals {
       application = app_name
       environment = name
       trigger     = objectkey
+    }],
+    [for name, tag in coalesce(app.ecr.trigger, {}) : {
+      source      = "ecr"
+      application = app_name
+      environment = name
+      trigger     = tag
     }]
 
     )]) : "${e.application}/${e.environment}" => e
