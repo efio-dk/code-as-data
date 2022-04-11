@@ -20,18 +20,17 @@ locals {
   })
 
   git_repository_breakdown = { for k, v in var.applications : k =>
-    flatten(regexall("(github.com|bitbucket.org)[:\\/]([^\\/]+)\\/([^\\/]+)\\.git", v.git_repository_url))
+    flatten(regexall("(github.com|bitbucket.org)[:\\/]([^\\/]+)\\/([^\\/]+)\\.git", v.git_repository_url)) if v.git_repository_url != null
   }
 
   application = { for app_name, app in var.applications : app_name => {
-
-    git = {
+    git = contains(local.git_repository_breakdown, app_name) ? {
       provider   = local.git_repository_breakdown[app_name][0]
       owner      = local.git_repository_breakdown[app_name][1]
       repository = local.git_repository_breakdown[app_name][2]
       connection = coalesce(app.git_connection, one(keys(local.config.git_connection)))
       trigger    = coalesce(app.git_trigger, { single = "main" })
-    }
+    } :  null
     s3 = {
       bucket  = app.s3_bucket
       trigger = app.s3_trigger
