@@ -18,4 +18,4 @@ phases:
 
   build:
     commands:
-      - terraform apply -var-file=${ENV}.tfvars -auto-approve
+      - terraform apply -var-file=$${ENV}.tfvars -auto-approve
