@@ -24,13 +24,13 @@ locals {
   }
 
   application = { for app_name, app in var.applications : app_name => {
-    git = contains(local.git_repository_breakdown, app_name) ? {
+    git = app.git_repository_url != null ? {
       provider   = local.git_repository_breakdown[app_name][0]
       owner      = local.git_repository_breakdown[app_name][1]
       repository = local.git_repository_breakdown[app_name][2]
       connection = coalesce(app.git_connection, one(keys(local.config.git_connection)))
       trigger    = coalesce(app.git_trigger, { single = "main" })
-    } :  null
+    } : null
     s3 = {
       bucket  = app.s3_bucket
       trigger = app.s3_trigger
