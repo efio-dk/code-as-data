@@ -23,31 +23,28 @@ locals {
   }
 
   application = { for app_name, app in var.applications : app_name => {
-    git = app.git_repository_url != null ? {
+    git = {
       provider   = local.git_repository_breakdown[app_name][0]
       owner      = local.git_repository_breakdown[app_name][1]
       repository = local.git_repository_breakdown[app_name][2]
       connection = coalesce(app.git_connection, one(keys(local.config.git_connection)))
       trigger    = coalesce(app.git_trigger, { single = "main" })
-    } : null
-    s3 = app.s3_bucket != null ? {
+    }
+    s3 = {
       bucket  = app.s3_bucket
       trigger = app.s3_trigger
-    } : null
-    ecr = app.ecr_repository != null ? {
+    }
+    ecr = {
       repository = app.ecr_repository
       trigger    = app.ecr_trigger
-    } : null
+    }
     action = { for name, val in app.action : name => {
       type      = val.type
       src       = val.source
-      dst       = coalescee(val.target, "")
-      args      = coalescee(val.custom_args, "")
+      dst       = val.target != null ? val.target : ""
+      args      = val.custom_args != null ? val.custom_args : ""
       stage     = local.type_stage_map[val.type]
-      run_order = coalescee(val.run_order, 1)
-      # dst       = val.target != null ? val.target : ""
-      # args      = val.custom_args != null ? val.custom_args : ""
-      # run_order = val.run_order != null ? val.run_order : 1
+      run_order = coalesce(val.run_order, 1)
     } }
   } }
 
