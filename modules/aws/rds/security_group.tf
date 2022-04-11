@@ -5,7 +5,7 @@ resource "aws_security_group" "client" {
   vpc_id      = local.config.vpc_id
 
   tags = merge(local.default_tags, {
-    Name = "${local.name_prefix}client-sg"
+    Name = "${local.name_prefix}rds-client-sg"
   })
 }
 
@@ -31,6 +31,6 @@ resource "aws_security_group" "instance" {
   }
 
   tags = merge(local.default_tags, {
-    Name = "${local.name_prefix}instance-sg"
+    Name = "${local.name_prefix}rds-instance-sg"
   })
 }
