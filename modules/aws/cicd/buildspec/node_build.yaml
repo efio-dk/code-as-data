@@ -2,11 +2,15 @@ version: 0.2
 
 env:
   shell: bash
+  LANG: en_US.utf-8
+  LC_ALL: en_US.utf-8
+  LANGUAGE: en_US.utf-8
 
 phases:
   install:
     commands:
       - npm install
+      - yum -y install locales
 
   # pre_build:
   #   commands:
