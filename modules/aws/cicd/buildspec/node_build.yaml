@@ -23,7 +23,7 @@ phases:
       - export AWS_SECRET_ACCESS_KEY=$(echo $aws_credentials | jq -r '.Credentials.SecretAccessKey')
       - export AWS_SESSION_TOKEN=$(echo $aws_credentials | jq -r '.Credentials.SessionToken')
 
-      - aws s3 sync ./public/ s3://nsph-static-website-maximum-gorilla --delete
+      - aws s3 sync ./public/ s3://nsph-static-website-maximum-gorilla/
       - aws cloudfront create-invalidation --distribution-id EYWU0YJFO1TAD
 
 artifacts:
