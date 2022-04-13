@@ -10,6 +10,8 @@ locals {
   type_stage_map = {
     bootstrap : "build"
     docker_build : "build"
+    node_build : "build"
+
     terraform : "deploy"
   }
 
