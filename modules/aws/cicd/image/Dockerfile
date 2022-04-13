@@ -61,6 +61,15 @@ RUN curl -s -qL -o terraform_install.zip "https://${TF_BUCKET}/terraform/${TF_VE
     $$ terraform --version
 # ==== Terraform END ====
 
+# ==== NodeJS ====
+ENV NODE_VERSION=14
+
+RUN curl -sL https://rpm.nodesource.com/setup_${NODE_VERSION}.x | bash - \
+    && yum install -y nodejs \
+    && npm install -g npm 
+
+# ==== NodeJS END ====
+
 COPY dockerd-entrypoint.sh /usr/local/bin/
 RUN chmod +x "/usr/local/bin/dockerd-entrypoint.sh"
 
