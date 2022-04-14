@@ -173,6 +173,50 @@ resource "aws_codepipeline" "this" {
     }
   }
 
+  dynamic "stage" {
+    for_each = length({ for k, v in local.action : k => v if v.application == each.value.application && v.stage == "deploy" }) > 0 ? [1] : []
+
+    content {
+      name = "Deploy"
+
+      dynamic "action" {
+        for_each = { for k, v in local.action : k => v if v.application == each.value.application && v.stage == "deploy" }
+
+        content {
+          name            = action.value.action
+          category        = "Build"
+          owner           = "AWS"
+          provider        = "CodeBuild"
+          input_artifacts = ["source_output"]
+          version         = "1"
+          run_order       = "1"
+          namespace       = "ns_${action.value.stage}_${action.value.action}"
+
+          configuration = {
+            ProjectName = aws_codebuild_project.action[action.value.type].name
+            EnvironmentVariables = jsonencode([
+              {
+                "name" : "SRC",
+                "value" : local.application[action.value.application].action[action.value.action].src,
+                "type" : "PLAINTEXT"
+              },
+              {
+                "name" : "DST",
+                "value" : action.value.ecr ? aws_ecr_repository.this[action.key].repository_url : local.application[action.value.application].action[action.value.action].dst,
+                "type" : "PLAINTEXT"
+              },
+              {
+                "name" : "ARGS",
+                "value" : local.application[action.value.application].action[action.value.action].args,
+                "type" : "PLAINTEXT"
+              },
+            ])
+          }
+        }
+      }
+    }
+  }
+
   #       content {
   #         name            = "${action.value.action}-${action.value.type}"
   #         category        = "Build"
