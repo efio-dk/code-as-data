@@ -13,6 +13,7 @@ locals {
     node_build : "build"
 
     terraform : "deploy"
+    invalidate_distribution: "release"
   }
 
   config = defaults(var.config, {

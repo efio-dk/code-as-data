@@ -39,6 +39,9 @@ resource "aws_codebuild_project" "action" {
     buildspec = templatefile("${path.module}/buildspec/${each.key}.yaml", {
       aws_account = local.account_id
       aws_region  = local.region_name
+
+      # Snippets
+      assume_role_snippet   = local.assume_role_snippet
     })
   }
 
@@ -51,4 +54,10 @@ resource "aws_codebuild_project" "action" {
       security_group_ids = [for sg in aws_security_group.this : sg.id]
     }
   }
+}
+
+locals {
+  assume_role_snippet = templatefile("${path.module}/buildspec/snippet/assume_role.yaml", {
+
+  })
 }
