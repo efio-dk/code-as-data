@@ -1,0 +1,13 @@
+version: 0.2
+
+env:
+  shell: bash
+
+phases:
+  pre_build:
+    commands:
+      ${assume_role_snippet}
+
+  build:
+    commands:
+      - aws cloudfront create-invalidation --distribution-id $DST --paths "$ARGS:-/*" # "/*"
