@@ -10,4 +10,4 @@ phases:
 
   build:
     commands:
-      - aws cloudfront create-invalidation --distribution-id $DST --paths "$ARGS:-/*"
+      - aws cloudfront create-invalidation --distribution-id $SRC --paths "$DST:-/*"
