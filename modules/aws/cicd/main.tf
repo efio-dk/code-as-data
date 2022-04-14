@@ -10,10 +10,12 @@ locals {
   type_stage_map = {
     bootstrap : "build"
     docker_build : "build"
-    node_build : "build"
+    npm_build : "build"
 
     terraform : "deploy"
-    invalidate_distribution: "release"
+    s3_deploy: "deploy"
+    
+    cloudfront: "release"
   }
 
   config = defaults(var.config, {
