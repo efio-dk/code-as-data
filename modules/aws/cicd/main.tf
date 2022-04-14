@@ -13,9 +13,9 @@ locals {
     npm_build : "build"
 
     terraform : "deploy"
-    s3_deploy: "deploy"
-    
-    cloudfront: "release"
+    s3_deploy : "deploy"
+
+    cloudfront : "release"
   }
 
   config = defaults(var.config, {

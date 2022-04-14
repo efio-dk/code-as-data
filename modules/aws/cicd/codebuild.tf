@@ -41,7 +41,7 @@ resource "aws_codebuild_project" "action" {
       aws_region  = local.region_name
 
       # Snippets
-      assume_role_snippet   = local.assume_role_snippet
+      assume_role_snippet = local.assume_role_snippet
     })
   }
 
