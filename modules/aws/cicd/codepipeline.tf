@@ -121,22 +121,15 @@ resource "aws_codepipeline" "this" {
       }
     }
   }
-  // test
-  // release
-  // deploy
-  // validation
-
-
-
 
   dynamic "stage" {
-    for_each = length({ for k, v in local.action : k => v if v.application == each.value.application && v.stage == "release" }) > 0 ? [1] : []
+    for_each = length({ for k, v in local.action : k => v if v.application == each.value.application && v.stage == "deploy" }) > 0 ? [1] : []
 
     content {
-      name = "Release"
+      name = "Deploy"
 
       dynamic "action" {
-        for_each = { for k, v in local.action : k => v if v.application == each.value.application && v.stage == "release" }
+        for_each = { for k, v in local.action : k => v if v.application == each.value.application && v.stage == "deploy" }
 
         content {
           name            = action.value.action
@@ -174,13 +167,13 @@ resource "aws_codepipeline" "this" {
   }
 
   dynamic "stage" {
-    for_each = length({ for k, v in local.action : k => v if v.application == each.value.application && v.stage == "deploy" }) > 0 ? [1] : []
+    for_each = length({ for k, v in local.action : k => v if v.application == each.value.application && v.stage == "release" }) > 0 ? [1] : []
 
     content {
-      name = "Deploy"
+      name = "Release"
 
       dynamic "action" {
-        for_each = { for k, v in local.action : k => v if v.application == each.value.application && v.stage == "deploy" }
+        for_each = { for k, v in local.action : k => v if v.application == each.value.application && v.stage == "release" }
 
         content {
           name            = action.value.action
