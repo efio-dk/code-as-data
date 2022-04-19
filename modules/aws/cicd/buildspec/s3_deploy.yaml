@@ -10,4 +10,4 @@ phases:
 
   build:
     commands:
-      - aws s3 sync ./public/ s3://$DST --delete
+      - aws s3 sync $SRC s3://$DST --delete

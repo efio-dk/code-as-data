@@ -25,3 +25,4 @@ phases:
   post_build:
     commands:
       - (exit $EXISTING) || docker push $REGISTRY --all-tags
+      - if [ -f "$SRC/docker-compose.yaml" ]; then aws s3 cp $SRC/docker-compose.yaml s3://${artifact_bucket}/$${name}/ ; fi

@@ -24,6 +24,9 @@ sudo service docker start
 sudo systemctl enable docker
 sudo usermod -a -G docker ec2-user
 
+sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /bin/docker-compose
+sudo chmod +x /bin/docker-compose
+
 # ecr login
 %{ for command in commands ~}
 ${command}

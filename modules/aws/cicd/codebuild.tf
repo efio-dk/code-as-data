@@ -37,6 +37,7 @@ resource "aws_codebuild_project" "action" {
   source {
     type = "CODEPIPELINE"
     buildspec = templatefile("${path.module}/buildspec/${each.key}.yaml", {
+      artifact_bucket = aws_s3_bucket.this.bucket
       aws_account = local.account_id
       aws_region  = local.region_name
 
