@@ -37,5 +37,11 @@ phases:
     commands:
       # - (exit $EXISTING) || docker push $REGISTRY --all-tags
       - if [ -z "$UNKNOWN" ]; then docker push $REGISTRY --all-tags; fi
+      - |
+        if [ -z "$UNKNOWN" ]
+        then
+          aws ecr get-login-password --region ${aws_region} | docker login --username AWS --password-stdin ${aws_account}.dkr.ecr.${aws_region}.amazonaws.com
+          docker push $REGISTRY --all-tags
+        fi
       - aws sts get-caller-identity
       - if [ -f "$SRC/docker-compose.yaml" ]; then aws s3 cp $SRC/docker-compose.yaml s3://${artifact_bucket}/$${APP}/$${ACTION}/ ; fi
