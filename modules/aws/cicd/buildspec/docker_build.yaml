@@ -15,12 +15,14 @@ phases:
     commands:
       - GITHASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)
       - DIGEST=$(sha256sum <(find ./$SRC/. -type f -exec sha256sum {} \; | sort) | head -c 12)
+      - EXISTING=0
       - aws ecr get-login-password --region ${aws_region} | docker login --username AWS --password-stdin ${aws_account}.dkr.ecr.${aws_region}.amazonaws.com
       - docker manifest inspect $REGISTRY:sha256-$DIGEST > /dev/null || EXISTING=$?
       - docker login --username dimhcicd --password CjsWpMAGuSfJGyzjYzwPqvvXMKaTfXfn
 
   build:
     commands:
+      - if [ "$EXISTING" = "0" ]; then echo "An image with same source sha256 already exists. Skipping build."; fi
       - (exit $EXISTING) || docker build $SRC -t $REGISTRY:latest -t $REGISTRY:git-$GITHASH -t $REGISTRY:build-$CODEBUILD_BUILD_NUMBER -t $REGISTRY:sha256-$DIGEST $ARGS
 
   post_build:
