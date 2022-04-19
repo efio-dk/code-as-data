@@ -162,7 +162,12 @@ resource "aws_codepipeline" "this" {
 
               [
                 {
-                  "name" : "NAME",
+                  "name" : "APP",
+                  "value" : action.value.application,
+                  "type" : "PLAINTEXT"
+                },
+                {
+                  "name" : "ACTION",
                   "value" : action.value.action,
                   "type" : "PLAINTEXT"
                 },
