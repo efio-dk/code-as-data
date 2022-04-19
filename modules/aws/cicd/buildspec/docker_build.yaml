@@ -27,7 +27,7 @@ phases:
       # - if [ "$EXISTING" = "0" ]; then echo "An image with same source sha256 already exists. Skipping build."; fi
       # - (exit $EXISTING) || docker build $SRC -t $REGISTRY:latest -t $REGISTRY:git-$GITHASH -t $REGISTRY:build-$CODEBUILD_BUILD_NUMBER -t $REGISTRY:sha256-$DIGEST $ARGS
       - |
-        if [ -z "$UNKNOWN" ]
+        if [ ! -z "$UNKNOWN" ]
         then
           docker build $SRC -t $REGISTRY:latest -t $REGISTRY:git-$GITHASH -t $REGISTRY:build-$CODEBUILD_BUILD_NUMBER -t $REGISTRY:sha256-$DIGEST $ARGS
         else
@@ -37,9 +37,8 @@ phases:
   post_build:
     commands:
       # - (exit $EXISTING) || docker push $REGISTRY --all-tags
-      - if [ -z "$UNKNOWN" ]; then docker push $REGISTRY --all-tags; fi
       - |
-        if [ -z "$UNKNOWN" ]
+        if [ ! -z "$UNKNOWN" ]
         then
           aws ecr get-login-password --region ${aws_region} | docker login --username AWS --password-stdin ${aws_account}.dkr.ecr.${aws_region}.amazonaws.com
           docker push $REGISTRY --all-tags
