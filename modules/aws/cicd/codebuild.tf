@@ -38,8 +38,8 @@ resource "aws_codebuild_project" "action" {
     type = "CODEPIPELINE"
     buildspec = templatefile("${path.module}/buildspec/${each.key}.yaml", {
       artifact_bucket = aws_s3_bucket.this.bucket
-      aws_account = local.account_id
-      aws_region  = local.region_name
+      aws_account     = local.account_id
+      aws_region      = local.region_name
 
       # Snippets
       assume_role_snippet = local.assume_role_snippet
