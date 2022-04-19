@@ -143,23 +143,46 @@ resource "aws_codepipeline" "this" {
 
           configuration = {
             ProjectName = aws_codebuild_project.action[action.value.type].name
-            EnvironmentVariables = jsonencode([
-              {
-                "name" : "SRC",
-                "value" : local.application[action.value.application].action[action.value.action].src,
-                "type" : "PLAINTEXT"
-              },
-              {
-                "name" : "DST",
-                "value" : action.value.ecr ? aws_ecr_repository.this[action.key].repository_url : local.application[action.value.application].action[action.value.action].dst,
-                "type" : "PLAINTEXT"
-              },
-              {
-                "name" : "ARGS",
-                "value" : local.application[action.value.application].action[action.value.action].args,
-                "type" : "PLAINTEXT"
-              },
-            ])
+            EnvironmentVariables = jsonencode(concat(
+
+
+              # [for k, a in local.deploy_actions : {
+              #   "name" : "${a.action}",
+              #   "value" : "#{ns-${a.action}.OUTPUT}",
+              #   "type" : "PLAINTEXT"
+              #   } if a.name == each.value.name
+              #   && local.codebuild_action_projects[action.value.type].run_order > local.codebuild_action_projects[a.type].run_order
+              # ],
+
+              # [for key, val in local.env_vars[each.value.trigger] : {
+              #   "name"  = key,
+              #   "value" = val,
+              #   "type"  = "PLAINTEXT"
+              # }],
+
+              [
+                {
+                  "name" : "NAME",
+                  "value" : action.value.action,
+                  "type" : "PLAINTEXT"
+                },
+                {
+                  "name" : "SRC",
+                  "value" : local.application[action.value.application].action[action.value.action].src,
+                  "type" : "PLAINTEXT"
+                },
+                {
+                  "name" : "DST",
+                  "value" : action.value.ecr ? aws_ecr_repository.this[action.key].repository_url : local.application[action.value.application].action[action.value.action].dst,
+                  "type" : "PLAINTEXT"
+                },
+                {
+                  "name" : "ARGS",
+                  "value" : local.application[action.value.application].action[action.value.action].args,
+                  "type" : "PLAINTEXT"
+                },
+
+            ]))
           }
         }
       }
@@ -209,46 +232,6 @@ resource "aws_codepipeline" "this" {
       }
     }
   }
-
-  #       content {
-  #         name            = "${action.value.action}-${action.value.type}"
-  #         category        = "Build"
-  #         owner           = "AWS"
-  #         provider        = "CodeBuild"
-  #         input_artifacts = ["source_output"]
-  #         version         = "1"
-  #         run_order       = "1"
-
-  #         configuration = {
-  #           ProjectName = aws_codebuild_project.action[action.value.type].name
-
-  #           EnvironmentVariables = jsonencode([
-  #             {
-  #               "name" : "PIPELINE",
-  #               "value" : "${var.config.name_prefix}${each.value.name}-${each.value.trigger}"
-  #               "type" : "PLAINTEXT"
-  #             },
-  #             {
-  #               "name" : "SRC",
-  #               "value" : action.value.path,
-  #               "type" : "PLAINTEXT"
-  #             },
-  #             {
-  #               "name" : "REGISTRY",
-  #               "value" : action.value.image_registry != null ? action.value.image_registry : "",
-  #               "type" : "PLAINTEXT"
-  #             },
-  #             {
-  #               "name" : "IMAGE",
-  #               "value" : "${action.value.name}-${action.value.action}",
-  #               "type" : "PLAINTEXT"
-  #             },
-  #           ])
-  #         }
-  #       }
-  #     }
-  #   }
-  # }
 
   # dynamic "stage" {
   #   for_each = length([
