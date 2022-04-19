@@ -19,6 +19,7 @@ phases:
       - aws ecr get-login-password --region ${aws_region} | docker login --username AWS --password-stdin ${aws_account}.dkr.ecr.${aws_region}.amazonaws.com
       # - docker manifest inspect $REGISTRY:sha256-$DIGEST > /dev/null || EXISTING=$?
       - docker manifest inspect $REGISTRY:sha256-$DIGEST > /dev/null || UNKNOWN=true
+      - echo $UNKNOWN
       - docker login --username dimhcicd --password CjsWpMAGuSfJGyzjYzwPqvvXMKaTfXfn
 
   build:
