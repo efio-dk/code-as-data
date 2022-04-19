@@ -101,6 +101,16 @@ resource "aws_codepipeline" "this" {
             ProjectName = aws_codebuild_project.action[action.value.type].name
             EnvironmentVariables = jsonencode([
               {
+                "name" : "APP",
+                "value" : action.value.application,
+                "type" : "PLAINTEXT"
+              },
+              {
+                "name" : "ACTION",
+                "value" : action.value.action,
+                "type" : "PLAINTEXT"
+              },
+              {
                 "name" : "SRC",
                 "value" : local.application[action.value.application].action[action.value.action].src,
                 "type" : "PLAINTEXT"
