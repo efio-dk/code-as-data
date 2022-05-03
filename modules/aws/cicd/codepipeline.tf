@@ -156,20 +156,27 @@ resource "aws_codepipeline" "this" {
         for_each = { for k, v in local.action : k => v if v.application == each.value.application && v.stage == "deploy" }
 
         content {
-          name            = action.value.action
-          category        = "Build"
-          owner           = "AWS"
-          provider        = "CodeBuild"
-          input_artifacts = [local.application[action.value.application].action[action.value.action].src]
-          # input_artifacts = concat(["source_output"],
-          #   [for value in values(local.action) : "${value.action}_output" if value.application == each.value.application && value.stage == "build"]
-          # )
+          name     = action.value.action
+          category = "Build"
+          owner    = "AWS"
+          provider = "CodeBuild"
+          # input_artifacts = [
+          #   local.application[action.value.application].action[action.value.action].src
+          # ]
+          input_artifacts = concat(["source_output"],
+            [for value in values(local.action) : "${value.action}_output" if value.application == each.value.application && value.stage == "build"]
+          )
           version   = "1"
           run_order = action.value.run_order
           namespace = "ns_${action.value.stage}_${action.value.action}"
 
           configuration = {
-            # PrimarySource = "source_output"
+            PrimarySource = lookup({ for value in values(local.action) : value.action => "${value.action}_output" if value.application == each.value.application && value.stage == "build" }, "source_output")
+
+
+
+
+            # "source_output"
             ProjectName = aws_codebuild_project.action[action.value.type].name
             EnvironmentVariables = jsonencode(concat(
               [
