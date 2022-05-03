@@ -171,7 +171,7 @@ resource "aws_codepipeline" "this" {
           namespace = "ns_${action.value.stage}_${action.value.action}"
 
           configuration = {
-            PrimarySource = lookup({ for value in values(local.action) : value.action => "${value.action}_output" if value.application == each.value.application && value.stage == "build" }, "source_output")
+            PrimarySource = lookup({ for value in values(local.action) : value.action => "${value.action}_output" if value.application == each.value.application && value.stage == "build" }, local.application[action.value.application].action[action.value.action].src, "source_output")
 
 
 
