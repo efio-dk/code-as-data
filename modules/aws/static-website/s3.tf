@@ -74,7 +74,7 @@ resource "aws_s3_bucket_website_configuration" "this" {
 # }
 
 data "aws_iam_policy_document" "this" {
-  /*
+
   statement {
     sid    = "Allow SSL Requests Only"
     effect = "Deny"
@@ -95,7 +95,7 @@ data "aws_iam_policy_document" "this" {
       values   = ["false"]
     }
   }
-
+  /*
   statement {
     sid    = "Deny Incorrect Encryption Header"
     effect = "Deny"
