@@ -10,18 +10,19 @@ resource "aws_s3_bucket" "this" {
   bucket = "${local.name_prefix}static-website-${random_pet.this.id}"
   tags   = local.default_tags
 }
-/*
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
   bucket = aws_s3_bucket.this.bucket
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.this.arn
-      sse_algorithm     = "aws:kms"
+      # kms_master_key_id = aws_kms_key.this.arn
+      # sse_algorithm     = "aws:kms"
+      sse_algorithm     = "AES256"
     }
   }
 }
-
+/*
 resource "aws_s3_bucket_public_access_block" "this" {
   bucket = aws_s3_bucket.this.id
 
