@@ -8,4 +8,4 @@
            export AWS_SECRET_ACCESS_KEY=$(echo $aws_credentials | jq -r '.Credentials.SecretAccessKey')
            export AWS_SESSION_TOKEN=$(echo $aws_credentials | jq -r '.Credentials.SessionToken')
         fi
-        aws sts get-caller-identity --region ${}
+        aws sts get-caller-identity
