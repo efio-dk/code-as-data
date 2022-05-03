@@ -148,14 +148,22 @@ resource "aws_codepipeline" "this" {
         for_each = { for k, v in local.action : k => v if v.application == each.value.application && v.stage == "deploy" }
 
         content {
-          name            = action.value.action
-          category        = "Build"
-          owner           = "AWS"
-          provider        = "CodeBuild"
-          input_artifacts = ["source_output"]
-          version         = "1"
-          run_order       = "1"
-          namespace       = "ns_${action.value.stage}_${action.value.action}"
+          name     = action.value.action
+          category = "Build"
+          owner    = "AWS"
+          provider = "CodeBuild"
+          input_artifacts = concat(["source_output"],
+
+
+            [for value in value(local.action) : "${value.action}_output" if v.application == each.value.application && v.stage == "build"]
+          )
+          # for_each = length({ for k, v in local.action : k => v if v.application == each.value.application && v.stage == "build" }) > 0 ? [1] : []
+
+
+
+          version   = "1"
+          run_order = "1"
+          namespace = "ns_${action.value.stage}_${action.value.action}"
 
           configuration = {
             ProjectName = aws_codebuild_project.action[action.value.type].name
