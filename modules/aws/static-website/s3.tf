@@ -16,8 +16,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
 
   rule {
     apply_server_side_encryption_by_default {
-      # kms_master_key_id = aws_kms_key.this.arn
-      # sse_algorithm     = "aws:kms"
       sse_algorithm = "AES256"
     }
   }
@@ -212,13 +210,13 @@ resource "aws_s3_bucket_policy" "this" {
   policy = data.aws_iam_policy_document.this.json
 }
 
-resource "aws_s3_object" "this" {
-  count = local.config.deploy_sample_document ? 1 : 0
+# resource "aws_s3_object" "this" {
+#   count = local.config.deploy_sample_document ? 1 : 0
 
-  bucket       = aws_s3_bucket.this.bucket
-  key          = "index.html"
-  source       = "${path.module}/sample/index.html"
-  content_type = "text/html"
-  # kms_key_id   = aws_kms_key.this.arn
-  bucket_key_enabled = true
-}
+#   bucket       = aws_s3_bucket.this.bucket
+#   key          = "index.html"
+#   source       = "${path.module}/sample/index.html"
+#   content_type = "text/html"
+#   # kms_key_id   = aws_kms_key.this.arn
+#   bucket_key_enabled = true
+# }
