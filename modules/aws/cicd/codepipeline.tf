@@ -219,6 +219,25 @@ resource "aws_codepipeline" "this" {
           }
         }
       }
+
+      dynamic "action" {
+        for_each = { for k, v in local.action : k => v if v.application == each.value.application && v.stage == "deploy" && v.type == "s3_deploy" }
+
+        content {
+          name            = action.value.action
+          category        = "Deploy"
+          owner           = "AWS"
+          provider        = "S3"
+          input_artifacts = "${action.value.source}_output"
+          version         = "1"
+          run_order       = action.value.run_order
+          namespace       = "ns_${action.value.stage}_${action.value.action}"
+
+          configuration = {
+
+          }
+        }
+      }
     }
   }
 
