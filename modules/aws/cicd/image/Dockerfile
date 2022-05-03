@@ -4,6 +4,7 @@ FROM amazon/aws-cli
 
 # LANG=en_US.utf-8
 # LC_ALL=en_US.utf-8
+# en_US.UTF-8
 
 # RUN yum -y install unzip tar gzip shadow-utils.x86_64 iptables openssl python3 pip java jq git hugo
 RUN yum upgrade -y \

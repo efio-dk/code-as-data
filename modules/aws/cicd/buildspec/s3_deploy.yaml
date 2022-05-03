@@ -2,8 +2,12 @@ version: 0.2
 
 env:
   shell: bash
+  exported-variables:
+    - OUTPUT
 
 phases:
   build:
     commands:
+      - LANG=en_US.utf-8
+      - LC_ALL=en_US.utf-8
       - aws s3 sync . s3://$DST --delete --sse
