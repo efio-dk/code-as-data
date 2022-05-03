@@ -95,7 +95,7 @@ resource "aws_codepipeline" "this" {
           input_artifacts  = ["source_output"]
           version          = "1"
           run_order        = "1"
-          output_artifacts = ["build_output"]
+          output_artifacts = ["${action.value.action}_output"]
           namespace        = "ns_${action.value.stage}_${action.value.action}"
 
           configuration = {
