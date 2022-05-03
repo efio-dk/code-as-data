@@ -104,7 +104,7 @@ resource "aws_codepipeline" "this" {
               [
                 for k, a in local.action : {
                   name : a.action,
-                  value : "ns_${a.stage}_${a.action}__${k}"
+                  value : "#{ns_${a.stage}_${a.action}.OUTPUT}"
                   type : "PLAINTEXT"
                 } if a.application == action.value.application && a.run_order < action.value.run_order
               ],
@@ -174,7 +174,7 @@ resource "aws_codepipeline" "this" {
               [
                 for k, a in local.action : {
                   name : a.action,
-                  value : "ns_${a.stage}_${a.action}__${k}"
+                  value : "#{ns_${a.stage}_${a.action}.OUTPUT}"
                   type : "PLAINTEXT"
                 } if a.application == action.value.application && a.run_order < action.value.run_order
               ],
@@ -247,7 +247,7 @@ resource "aws_codepipeline" "this" {
               [
                 for k, a in local.action : {
                   name : a.action,
-                  value : "ns_${a.stage}_${a.action}__${k}"
+                  value : "#{ns_${a.stage}_${a.action}.OUTPUT}"
                   type : "PLAINTEXT"
                 } if a.application == action.value.application && a.run_order < action.value.run_order
               ],
