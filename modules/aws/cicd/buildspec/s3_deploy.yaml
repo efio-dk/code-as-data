@@ -6,4 +6,4 @@ env:
 phases:
   build:
     commands:
-      - aws s3 sync $SRC s3://$DST --delete
+      - aws s3 sync . s3://$DST --delete

@@ -94,7 +94,7 @@ resource "aws_codepipeline" "this" {
           provider         = "CodeBuild"
           input_artifacts  = ["source_output"]
           version          = "1"
-          run_order        = "1"
+          run_order        = action.value.run_order
           output_artifacts = ["${action.value.action}_output"]
           namespace        = "ns_${action.value.stage}_${action.value.action}"
 
@@ -153,23 +153,24 @@ resource "aws_codepipeline" "this" {
       name = "Deploy"
 
       dynamic "action" {
-        for_each = { for k, v in local.action : k => v if v.application == each.value.application && v.stage == "deploy" && v.type != "s3_deploy" }
+        for_each = { for k, v in local.action : k => v if v.application == each.value.application && v.stage == "deploy" && v.type }
 
         content {
-          name     = action.value.action
-          category = "Build"
-          owner    = "AWS"
-          provider = "CodeBuild"
-          input_artifacts = concat(["source_output"],
-            [for value in values(local.action) : "${value.action}_output" if value.application == each.value.application && value.stage == "build"]
-          )
+          name            = action.value.action
+          category        = "Build"
+          owner           = "AWS"
+          provider        = "CodeBuild"
+          input_artifacts = [local.application[action.value.application].action[action.value.action].src]
+          # input_artifacts = concat(["source_output"],
+          #   [for value in values(local.action) : "${value.action}_output" if value.application == each.value.application && value.stage == "build"]
+          # )
           version   = "1"
-          run_order = "1"
+          run_order = action.value.run_order
           namespace = "ns_${action.value.stage}_${action.value.action}"
 
           configuration = {
-            PrimarySource = "source_output"
-            ProjectName   = aws_codebuild_project.action[action.value.type].name
+            # PrimarySource = "source_output"
+            ProjectName = aws_codebuild_project.action[action.value.type].name
             EnvironmentVariables = jsonencode(concat(
               [
                 for k, a in local.action : {
@@ -220,24 +221,24 @@ resource "aws_codepipeline" "this" {
         }
       }
 
-      dynamic "action" {
-        for_each = { for k, v in local.action : k => v if v.application == each.value.application && v.stage == "deploy" && v.type == "s3_deploy" }
+      #       dynamic "action" {
+      #         for_each = { for k, v in local.action : k => v if v.application == each.value.application && v.stage == "deploy" && v.type == "s3_deploy" }
 
-        content {
-          name            = action.value.action
-          category        = "Deploy"
-          owner           = "AWS"
-          provider        = "S3"
-          input_artifacts = [local.application[action.value.application].action[action.value.action].src]
-          version         = "1"
-          run_order       = action.value.run_order
-          namespace       = "ns_${action.value.stage}_${action.value.action}"
+      #         content {
+      #           name            = action.value.action
+      #           category        = "Deploy"
+      #           owner           = "AWS"
+      #           provider        = "S3"
+      #           input_artifacts = [local.application[action.value.application].action[action.value.action].src]
+      #           version         = "1"
+      #           run_order       = action.value.run_order
+      #           namespace       = "ns_${action.value.stage}_${action.value.action}"
 
-          configuration = {
-
-          }
-        }
-      }
+      #           configuration = {
+      # BucketName = 
+      #           }
+      #         }
+      #       }
     }
   }
 
