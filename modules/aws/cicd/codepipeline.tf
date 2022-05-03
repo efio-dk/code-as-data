@@ -228,7 +228,7 @@ resource "aws_codepipeline" "this" {
           category        = "Deploy"
           owner           = "AWS"
           provider        = "S3"
-          input_artifacts = "${action.value.source}_output"
+          input_artifacts = [local.application[action.value.application].action[action.value.action].src]
           version         = "1"
           run_order       = action.value.run_order
           namespace       = "ns_${action.value.stage}_${action.value.action}"
