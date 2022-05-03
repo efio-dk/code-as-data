@@ -8,6 +8,7 @@ env:
 phases:
   pre_build:
     commands:
+      ${env_vars_snippet}
       ${assume_role_snippet}
 
   build:
