@@ -115,7 +115,7 @@ data "aws_iam_policy_document" "this" {
       values   = [aws_kms_key.this.arn]
     }
   }
-
+*/
   statement {
     sid    = "Deny Unencrypted Object Uploads"
     effect = "Deny"
@@ -135,7 +135,7 @@ data "aws_iam_policy_document" "this" {
       values   = ["true"]
     }
   }
-*/
+
   statement {
     sid = "Allow CloudFront Browsing"
 
