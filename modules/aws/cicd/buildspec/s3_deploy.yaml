@@ -4,11 +4,6 @@ env:
   shell: bash
 
 phases:
-  pre_build:
-    commands:
-      - ASSUME_ROLE=arn:aws:iam::382888529141:role/utility_assume_role
-      ${assume_role_snippet}
-
   build:
     commands:
       - aws s3 sync $SRC s3://$DST --delete
