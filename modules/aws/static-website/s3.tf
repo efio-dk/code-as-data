@@ -18,7 +18,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
     apply_server_side_encryption_by_default {
       # kms_master_key_id = aws_kms_key.this.arn
       # sse_algorithm     = "aws:kms"
-      sse_algorithm     = "AES256"
+      sse_algorithm = "AES256"
     }
   }
 }
@@ -41,9 +41,7 @@ resource "aws_s3_bucket_versioning" "this" {
   bucket = aws_s3_bucket.this.id
   versioning_configuration {
     status = "Enabled"
-    # mfa_delete = "Enabled"
   }
-  # mfa
 }
 
 resource "aws_s3_bucket_website_configuration" "this" {
@@ -181,6 +179,38 @@ data "aws_iam_policy_document" "this" {
       }
     }
   }
+
+  dynamic "statement" {
+    for_each = length(local.config.trusted_accounts) > 0 ? [1] : []
+
+    content {
+      sid = "Allowed cross account uploads"
+
+      principals {
+        type        = "AWS"
+        identifiers = ["*"]
+      }
+
+      actions = [
+        "s3:GetObject",
+        "s3:PutObject"
+      ]
+
+      # resources = [
+      #   "${aws_s3_bucket.this.arn}/*",
+      # ]
+
+      resources = [for acc in local.config.trusted_accounts : "arn:aws:iam::${acc}:root"]
+
+      condition {
+        test     = "StringEquals"
+        variable = "s3:x-amz-acl"
+        values   = "public-read"
+      }
+    }
+  }
+
+
 }
 
 resource "aws_s3_bucket_policy" "this" {
