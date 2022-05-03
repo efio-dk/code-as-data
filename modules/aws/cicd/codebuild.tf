@@ -44,6 +44,7 @@ resource "aws_codebuild_project" "action" {
 
       # Snippets
       assume_role_snippet = local.assume_role_snippet
+      env_vars_snippet    = local.env_vars_snippet
     })
   }
 
