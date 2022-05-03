@@ -18,20 +18,6 @@ phases:
     commands:
       - npm run build
       
-  post_build:
-    commands:
-      - export LANG=en_US.utf-8
-      - export LC_ALL=en_US.utf-8
-      - export LANGUAGE=en_US.utf-8
-
-      # - aws_credentials=$(aws sts assume-role --role-arn arn:aws:iam::382888529141:role/utility_assume_role --role-session-name whatever)
-      # - export AWS_ACCESS_KEY_ID=$(echo $aws_credentials | jq -r '.Credentials.AccessKeyId')
-      # - export AWS_SECRET_ACCESS_KEY=$(echo $aws_credentials | jq -r '.Credentials.SecretAccessKey')
-      # - export AWS_SESSION_TOKEN=$(echo $aws_credentials | jq -r '.Credentials.SessionToken')
-
-      # - aws s3 sync ./public/ s3://nsph-static-website-maximum-gorilla/  --delete || echo ""
-      # - aws cloudfront create-invalidation --distribution-id EYWU0YJFO1TAD --paths "/*"
-
 artifacts:
   base-directory: public
   files:
