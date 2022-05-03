@@ -153,7 +153,7 @@ resource "aws_codepipeline" "this" {
       name = "Deploy"
 
       dynamic "action" {
-        for_each = { for k, v in local.action : k => v if v.application == each.value.application && v.stage == "deploy" && v.type }
+        for_each = { for k, v in local.action : k => v if v.application == each.value.application && v.stage == "deploy" }
 
         content {
           name            = action.value.action
