@@ -188,19 +188,21 @@ data "aws_iam_policy_document" "this" {
 
       principals {
         type        = "AWS"
-        identifiers = ["*"]
+        identifiers = [for acc in local.config.trusted_accounts : "arn:aws:iam::${acc}:root"]
       }
 
       actions = [
+        "s3:DeleteObject",
+        "s3:GetBucketLocation",
         "s3:GetObject",
+        "s3:ListBucket",
         "s3:PutObject"
       ]
 
-      # resources = [
-      #   "${aws_s3_bucket.this.arn}/*",
-      # ]
-
-      resources = [for acc in local.config.trusted_accounts : "arn:aws:iam::${acc}:root"]
+      resources = [
+        "${aws_s3_bucket.this.arn}",
+        "${aws_s3_bucket.this.arn}/*",
+      ]
 
       condition {
         test     = "StringEquals"
