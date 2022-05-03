@@ -153,7 +153,7 @@ resource "aws_codepipeline" "this" {
           owner    = "AWS"
           provider = "CodeBuild"
           input_artifacts = concat(["source_output"],
-            [for value in value(local.action) : "${value.action}_output" if value.application == each.value.application && value.stage == "build"]
+            [for value in values(local.action) : "${value.action}_output" if value.application == each.value.application && value.stage == "build"]
           )
           # for_each = length({ for k, v in local.action : k => v if v.application == each.value.application && v.stage == "build" }) > 0 ? [1] : []
 
