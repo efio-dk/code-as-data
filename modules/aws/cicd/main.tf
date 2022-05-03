@@ -89,7 +89,7 @@ locals {
         action      = action_name
         stage       = action.stage
         type        = action.type
-        run_order   = action.run_order + local.type_stage_order[action.stage] * 10
+        run_order   = action.run_order + local.stage_order[action.stage] * 10
         ecr         = contains(["bootstrap", "docker_build"], action.type) && try(length(action.dst) == 0, true)
     }]]) : "${a.application}/${a.stage}/${a.action}" => a
   }
