@@ -1,11 +1,11 @@
 # Snippet to set environment variables
 
       # Set environment variables specified in module variable var.env_vars
-      - echo "Loading env_vars from SSM Parameter store /${name_prefix}cicd/env_vars/$${ENV}/$${REGION}"
-      - ENV_VAR=$(aws ssm get-parameter --name "/${name_prefix}cicd/env_vars/$${ENV}/$${REGION}" --with-decryption --output text --query Parameter.Value || echo {})
+      - echo "Loading env_vars from SSM Parameter store /${name_prefix}cicd/env_vars/$${ENV}"
+      - ENV_VAR=$(aws ssm get-parameter --name "/${name_prefix}cicd/env_vars/$${ENV}" --with-decryption --output text --query Parameter.Value || echo {})
 
-      - echo "Loading secrets from SSM Parameter store /${name_prefix}cicd/secrets/$${ENV}/$${REGION}"
-      - SECRETS=$(aws ssm get-parameter --name "/${name_prefix}cicd/secrets/$${ENV}/$${REGION}" --with-decryption --output text --query Parameter.Value || echo {})
+      - echo "Loading secrets from SSM Parameter store /${name_prefix}cicd/secrets/$${ENV}"
+      - SECRETS=$(aws ssm get-parameter --name "/${name_prefix}cicd/secrets/$${ENV}" --with-decryption --output text --query Parameter.Value || echo {})
 
       - $(echo $ENV_VAR | jq -r 'to_entries | .[] | "export " + .key + "=" + .value')
       - $(echo $SECRETS | jq -r 'to_entries | .[] | "export " + .key + "=" + .value')
