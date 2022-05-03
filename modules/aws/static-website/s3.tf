@@ -184,7 +184,7 @@ data "aws_iam_policy_document" "this" {
     for_each = length(local.config.trusted_accounts) > 0 ? [1] : []
 
     content {
-      sid = "Allowed cross account uploads"
+      sid = "Allowed cross account sync"
 
       principals {
         type        = "AWS"
@@ -205,8 +205,6 @@ data "aws_iam_policy_document" "this" {
       ]
     }
   }
-
-
 }
 
 resource "aws_s3_bucket_policy" "this" {
