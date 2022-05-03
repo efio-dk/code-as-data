@@ -18,6 +18,12 @@ locals {
     cloudfront : "release"
   }
 
+  type_stage_order = {
+    build   = 0
+    deploy  = 10
+    release = 20
+  }
+
   config = defaults(var.config, {
     log_retention_in_days      = 7
     artifact_retention_in_days = 30
