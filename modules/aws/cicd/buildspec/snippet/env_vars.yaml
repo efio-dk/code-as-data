@@ -1,0 +1,26 @@
+# Snippet to set environment variables
+
+      # Set environment variables specified in module variable var.env_vars
+      - echo "Loading env_vars from SSM Parameter store /${name_prefix}cicd/env_vars/$${ENV}/$${REGION}"
+      - ENV_VAR=$(aws ssm get-parameter --name "/${name_prefix}cicd/env_vars/$${ENV}/$${REGION}" --with-decryption --output text --query Parameter.Value || echo {})
+
+      - echo "Loading secrets from SSM Parameter store /${name_prefix}cicd/secrets/$${ENV}/$${REGION}"
+      - SECRETS=$(aws ssm get-parameter --name "/${name_prefix}cicd/secrets/$${ENV}/$${REGION}" --with-decryption --output text --query Parameter.Value || echo {})
+
+      - $(echo $ENV_VAR | jq -r 'to_entries | .[] | "export " + .key + "=" + .value')
+      - $(echo $SECRETS | jq -r 'to_entries | .[] | "export " + .key + "=" + .value')
+      - unset ENV_VAR
+      - unset SECRETS
+
+      # # Collects and sets application specific env_vars (specified as terraform git_repositories[].env_vars variable) 
+      # # then secrets (referenced in AWS SSM Parameter Store /<repository_name>/<env>/<region>/secrets as json secure-string)
+      # - echo "Loading secrets from SSM Parameter store /$${REPO}/$${ENV}/$${REGION}/env_vars"
+      # - ENV_VAR=$(aws ssm get-parameter --name "/$${REPO}/$${ENV}/$${REGION}/env_vars" --with-decryption --output text --query Parameter.Value || echo {})
+
+      # - echo "Loading secrets from SSM Parameter store /$${REPO}/$${ENV}/$${REGION}/secrets"
+      # - SECRETS=$(aws ssm get-parameter --name "/$${REPO}/$${ENV}/$${REGION}/secrets" --with-decryption --output text --query Parameter.Value || echo {})
+
+      # - $(echo $ENV_VAR | jq -r 'to_entries | .[] | "export " + .key + "=" + .value')
+      # - $(echo $SECRETS | jq -r 'to_entries | .[] | "export " + .key + "=" + .value')
+      # - unset ENV_VAR
+      # - unset SECRETS

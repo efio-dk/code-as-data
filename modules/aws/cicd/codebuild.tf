@@ -59,7 +59,9 @@ resource "aws_codebuild_project" "action" {
 }
 
 locals {
-  assume_role_snippet = templatefile("${path.module}/buildspec/snippet/assume_role.yaml", {
+  assume_role_snippet = templatefile("${path.module}/buildspec/snippet/assume_role.yaml", {})
 
+  env_vars_snippet = templatefile("${path.module}/buildspec/snippet/env_vars.yaml", {
+    name_prefix : local.name_prefix
   })
 }
