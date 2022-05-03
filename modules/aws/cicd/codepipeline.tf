@@ -152,7 +152,7 @@ resource "aws_codepipeline" "this" {
           category        = "Build"
           owner           = "AWS"
           provider        = "CodeBuild"
-          input_artifacts = ["source_output", "build_output"]
+          input_artifacts = ["source_output"]
           version         = "1"
           run_order       = "1"
           namespace       = "ns_${action.value.stage}_${action.value.action}"
