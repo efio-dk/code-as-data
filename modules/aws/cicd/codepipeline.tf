@@ -169,8 +169,7 @@ resource "aws_codepipeline" "this" {
                   value : "ns_${a.stage}_${a.action}__${k}"
                   type : "PLAINTEXT"
                 } if a.application == action.value.application &&
-                contains(["build"], action.value.stage) &&
-                a.run_order > action.value.run_order
+                action.value.stage == "build" && a.run_order > action.value.run_order
               ],
               # [for key, val in local.env_vars[each.value.trigger] : {
               #   "name"  = key,
@@ -245,8 +244,7 @@ resource "aws_codepipeline" "this" {
                   value : "ns_${a.stage}_${a.action}__${k}"
                   type : "PLAINTEXT"
                 } if a.application == action.value.application &&
-                contains(["build", "deploy"], action.value.stage) &&
-                a.run_order > action.value.run_order
+                (action.value.stage == "build" || action.value.stage == "deploy" && a.run_order > action.value.run_order)
               ],
               [
                 {
