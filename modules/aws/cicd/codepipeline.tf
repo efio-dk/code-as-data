@@ -176,7 +176,7 @@ resource "aws_codepipeline" "this" {
                   name : a.action,
                   value : "ns_${a.stage}_${a.action}__${k}"
                   type : "PLAINTEXT"
-                } if a.application == action.value.application && a.run_order > action.value.run_order
+                } if a.application == action.value.application && a.run_order < action.value.run_order
               ],
               # [for key, val in local.env_vars[each.value.trigger] : {
               #   "name"  = key,
@@ -249,7 +249,7 @@ resource "aws_codepipeline" "this" {
                   name : a.action,
                   value : "ns_${a.stage}_${a.action}__${k}"
                   type : "PLAINTEXT"
-                } if a.application == action.value.application && a.run_order > action.value.run_order
+                } if a.application == action.value.application && a.run_order < action.value.run_order
               ],
               [
                 {
