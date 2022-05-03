@@ -18,10 +18,10 @@ locals {
     cloudfront : "release"
   }
 
-  type_stage_order = {
-    build   = 10
-    deploy  = 20
-    release = 30
+  stage_order = {
+    build   = 1
+    deploy  = 2
+    release = 3
   }
 
   config = defaults(var.config, {
@@ -89,7 +89,7 @@ locals {
         action      = action_name
         stage       = action.stage
         type        = action.type
-        run_order   = action.run_order + local.type_stage_order[action.type]
+        run_order   = action.run_order + local.type_stage_order[action.stage] * 10
         ecr         = contains(["bootstrap", "docker_build"], action.type) && try(length(action.dst) == 0, true)
     }]]) : "${a.application}/${a.stage}/${a.action}" => a
   }
