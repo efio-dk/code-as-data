@@ -19,9 +19,9 @@ locals {
   }
 
   type_stage_order = {
-    build   = 0
-    deploy  = 10
-    release = 20
+    build   = 10
+    deploy  = 20
+    release = 30
   }
 
   config = defaults(var.config, {
@@ -89,7 +89,7 @@ locals {
         action      = action_name
         stage       = action.stage
         type        = action.type
-        run_order   = action.run_order
+        run_order   = action.run_order + local.type_stage_order[action.type]
         ecr         = contains(["bootstrap", "docker_build"], action.type) && try(length(action.dst) == 0, true)
     }]]) : "${a.application}/${a.stage}/${a.action}" => a
   }
