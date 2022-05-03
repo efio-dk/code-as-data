@@ -169,7 +169,7 @@ resource "aws_codepipeline" "this" {
                   value : "ns_${a.stage}_${a.action}__${k}"
                   type : "PLAINTEXT"
                 } if a.application == action.value.application &&
-                contains(["build", "deploy"], action.value.stage) &&
+                contains(["build"], action.value.stage) &&
                 a.run_order > action.value.run_order
               ],
               # [for key, val in local.env_vars[each.value.trigger] : {
@@ -177,7 +177,6 @@ resource "aws_codepipeline" "this" {
               #   "value" = val,
               #   "type"  = "PLAINTEXT"
               # }],
-
               [
                 {
                   "name" : "ENV",
@@ -238,28 +237,39 @@ resource "aws_codepipeline" "this" {
 
           configuration = {
             ProjectName = aws_codebuild_project.action[action.value.type].name
-            EnvironmentVariables = jsonencode([
-              {
-                "name" : "ENV",
-                "value" : each.value.environment,
-                "type" : "PLAINTEXT"
-              },
-              {
-                "name" : "SRC",
-                "value" : local.application[action.value.application].action[action.value.action].src,
-                "type" : "PLAINTEXT"
-              },
-              {
-                "name" : "DST",
-                "value" : action.value.ecr ? aws_ecr_repository.this[action.key].repository_url : local.application[action.value.application].action[action.value.action].dst,
-                "type" : "PLAINTEXT"
-              },
-              {
-                "name" : "ARGS",
-                "value" : local.application[action.value.application].action[action.value.action].args,
-                "type" : "PLAINTEXT"
-              },
-            ])
+            EnvironmentVariables = jsonencode(concat(
+
+              [
+                for k, a in local.action : {
+                  name : a.action,
+                  value : "ns_${a.stage}_${a.action}__${k}"
+                  type : "PLAINTEXT"
+                } if a.application == action.value.application &&
+                contains(["build", "deploy"], action.value.stage) &&
+                a.run_order > action.value.run_order
+              ],
+              [
+                {
+                  "name" : "ENV",
+                  "value" : each.value.environment,
+                  "type" : "PLAINTEXT"
+                },
+                {
+                  "name" : "SRC",
+                  "value" : local.application[action.value.application].action[action.value.action].src,
+                  "type" : "PLAINTEXT"
+                },
+                {
+                  "name" : "DST",
+                  "value" : action.value.ecr ? aws_ecr_repository.this[action.key].repository_url : local.application[action.value.application].action[action.value.action].dst,
+                  "type" : "PLAINTEXT"
+                },
+                {
+                  "name" : "ARGS",
+                  "value" : local.application[action.value.application].action[action.value.action].args,
+                  "type" : "PLAINTEXT"
+                },
+            ]))
           }
         }
       }
