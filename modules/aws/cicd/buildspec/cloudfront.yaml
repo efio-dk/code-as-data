@@ -9,6 +9,7 @@ phases:
   pre_build:
     commands:
       ${env_vars_snippet}
+      - ASSUME_ROLE=$cicd_role
       ${assume_role_snippet}
 
   build:
