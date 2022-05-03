@@ -10,6 +10,7 @@ phases:
     commands:
       - /usr/local/bin/dockerd-entrypoint.sh
       - REGISTRY=$DST
+      ${assume_role_snippet}
 
   pre_build:
     commands:
