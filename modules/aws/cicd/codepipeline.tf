@@ -101,6 +101,11 @@ resource "aws_codepipeline" "this" {
             ProjectName = aws_codebuild_project.action[action.value.type].name
             EnvironmentVariables = jsonencode([
               {
+                "name" : "ENV",
+                "value" : each.value.environment,
+                "type" : "PLAINTEXT"
+              },
+              {
                 "name" : "APP",
                 "value" : action.value.application,
                 "type" : "PLAINTEXT"
@@ -172,6 +177,11 @@ resource "aws_codepipeline" "this" {
 
               [
                 {
+                  "name" : "ENV",
+                  "value" : each.value.environment,
+                  "type" : "PLAINTEXT"
+                },
+                {
                   "name" : "APP",
                   "value" : action.value.application,
                   "type" : "PLAINTEXT"
@@ -226,6 +236,11 @@ resource "aws_codepipeline" "this" {
           configuration = {
             ProjectName = aws_codebuild_project.action[action.value.type].name
             EnvironmentVariables = jsonencode([
+              {
+                "name" : "ENV",
+                "value" : each.value.environment,
+                "type" : "PLAINTEXT"
+              },
               {
                 "name" : "SRC",
                 "value" : local.application[action.value.application].action[action.value.action].src,
