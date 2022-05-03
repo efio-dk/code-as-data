@@ -163,16 +163,15 @@ resource "aws_codepipeline" "this" {
             PrimarySource = "source_output"
             ProjectName   = aws_codebuild_project.action[action.value.type].name
             EnvironmentVariables = jsonencode(concat(
-
-
-              # [for k, a in local.deploy_actions : {
-              #   "name" : "${a.action}",
-              #   "value" : "#{ns-${a.action}.OUTPUT}",
-              #   "type" : "PLAINTEXT"
-              #   } if a.name == each.value.name
-              #   && local.codebuild_action_projects[action.value.type].run_order > local.codebuild_action_projects[a.type].run_order
-              # ],
-
+              [
+                for k, a in local.action : {
+                  name : a.action,
+                  value : "ns_${a.stage}_${a.action}__${k}"
+                  type : "PLAINTEXT"
+                } if a.application == action.value.application &&
+                contains(["build", "deploy"], action.value.stage) &&
+                a.run_order > action.value.run_order
+              ],
               # [for key, val in local.env_vars[each.value.trigger] : {
               #   "name"  = key,
               #   "value" = val,

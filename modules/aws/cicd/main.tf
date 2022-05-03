@@ -83,6 +83,7 @@ locals {
         action      = action_name
         stage       = action.stage
         type        = action.type
+        run_order   = action.run_order
         ecr         = contains(["bootstrap", "docker_build"], action.type) && try(length(action.dst) == 0, true)
     }]]) : "${a.application}/${a.stage}/${a.action}" => a
   }
