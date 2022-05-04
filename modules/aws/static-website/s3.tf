@@ -20,7 +20,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
     }
   }
 }
-*/
+
 resource "aws_s3_bucket_public_access_block" "this" {
   bucket = aws_s3_bucket.this.id
 
@@ -29,7 +29,7 @@ resource "aws_s3_bucket_public_access_block" "this" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
-/*
+
 resource "aws_s3_bucket_acl" "this" {
   bucket = aws_s3_bucket.this.id
   acl    = "private"
