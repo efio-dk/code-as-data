@@ -109,6 +109,7 @@ data "aws_iam_policy_document" "this" {
     }
   }
   
+*/
   statement {
     sid    = "Deny Incorrect Encryption Header"
     effect = "Deny"
@@ -124,11 +125,10 @@ data "aws_iam_policy_document" "this" {
 
     condition {
       test     = "StringNotEquals"
-      variable = "s3:x-amz-server-side-encryption-aws-kms-key-id"
-      values   = [aws_kms_key.this.arn]
+      variable = "s3:x-amz-server-side-encryption"
+      values   = ["AES256"]
     }
   }
-*/
 
   statement {
     sid    = "Deny Unencrypted Object Uploads"
