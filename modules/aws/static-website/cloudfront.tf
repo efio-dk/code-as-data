@@ -59,7 +59,7 @@ resource "aws_cloudfront_distribution" "this" {
     for_each = aws_acm_certificate[0].this.status == "issued" ? [1] : []
 
     content {
-      acm_certificate_arn      = aws_acm_certificate.this.arn
+      acm_certificate_arn      = aws_acm_certificate[0].this.arn
       ssl_support_method       = "sni-only"
       minimum_protocol_version = "TLSv1"
     }
