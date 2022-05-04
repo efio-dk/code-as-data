@@ -88,26 +88,26 @@ data "aws_iam_policy_document" "this" {
 
   }
 
-  statement {
-    sid    = "Allow SSL Requests Only"
-    effect = "Deny"
-    resources = [
-      aws_s3_bucket.this.arn,
-      "${aws_s3_bucket.this.arn}/*"
-    ]
-    actions = ["s3:*"]
+  # statement {
+  #   sid    = "Allow SSL Requests Only"
+  #   effect = "Deny"
+  #   resources = [
+  #     aws_s3_bucket.this.arn,
+  #     "${aws_s3_bucket.this.arn}/*"
+  #   ]
+  #   actions = ["s3:*"]
 
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
+  #   principals {
+  #     type        = "*"
+  #     identifiers = ["*"]
+  #   }
 
-    condition {
-      test     = "Bool"
-      variable = "aws:SecureTransport"
-      values   = ["false"]
-    }
-  }
+  #   condition {
+  #     test     = "Bool"
+  #     variable = "aws:SecureTransport"
+  #     values   = ["false"]
+  #   }
+  # }
 
   statement {
     sid    = "Deny Incorrect Encryption Header"
