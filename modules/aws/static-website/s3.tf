@@ -10,7 +10,7 @@ resource "aws_s3_bucket" "this" {
   bucket = "${local.name_prefix}static-website-${random_pet.this.id}"
   tags   = local.default_tags
 }
-
+/*
 resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
   bucket = aws_s3_bucket.this.bucket
 
@@ -20,7 +20,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
     }
   }
 }
-
+*/
 resource "aws_s3_bucket_public_access_block" "this" {
   bucket = aws_s3_bucket.this.id
 
@@ -114,6 +114,7 @@ data "aws_iam_policy_document" "this" {
     }
   }
 */
+  /*
   statement {
     sid    = "Deny Unencrypted Object Uploads"
     effect = "Deny"
@@ -133,7 +134,7 @@ data "aws_iam_policy_document" "this" {
       values   = ["true"]
     }
   }
-
+*/
   statement {
     sid = "Allow CloudFront Browsing"
 
