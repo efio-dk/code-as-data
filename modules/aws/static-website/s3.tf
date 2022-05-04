@@ -135,6 +135,7 @@ data "aws_iam_policy_document" "this" {
     }
   }
 */
+  /*
   statement {
     sid = "Allow CloudFront Browsing"
 
@@ -151,7 +152,7 @@ data "aws_iam_policy_document" "this" {
       "${aws_s3_bucket.this.arn}/*",
     ]
   }
-
+*/
   dynamic "statement" {
     for_each = length(local.config.allowed_ip_cidrs) > 0 ? [1] : []
 
