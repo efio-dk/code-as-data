@@ -195,31 +195,31 @@ data "aws_iam_policy_document" "this" {
     }
   }
 
-  dynamic "statement" {
-    for_each = length(local.config.trusted_accounts) > 0 ? [1] : []
+  # dynamic "statement" {
+  #   for_each = length(local.config.trusted_accounts) > 0 ? [1] : []
 
-    content {
-      sid = "Allowed cross account sync"
+  #   content {
+  #     sid = "Allowed cross account sync"
 
-      principals {
-        type        = "AWS"
-        identifiers = [for acc in local.config.trusted_accounts : "arn:aws:iam::${acc}:root"]
-      }
+  #     principals {
+  #       type        = "AWS"
+  #       identifiers = [for acc in local.config.trusted_accounts : "arn:aws:iam::${acc}:root"]
+  #     }
 
-      actions = [
-        "s3:DeleteObject",
-        "s3:GetBucketLocation",
-        "s3:GetObject",
-        "s3:ListBucket",
-        "s3:PutObject"
-      ]
+  #     actions = [
+  #       "s3:DeleteObject",
+  #       "s3:GetBucketLocation",
+  #       "s3:GetObject",
+  #       "s3:ListBucket",
+  #       "s3:PutObject"
+  #     ]
 
-      resources = [
-        "${aws_s3_bucket.this.arn}",
-        "${aws_s3_bucket.this.arn}/*",
-      ]
-    }
-  }
+  #     resources = [
+  #       "${aws_s3_bucket.this.arn}",
+  #       "${aws_s3_bucket.this.arn}/*",
+  #     ]
+  #   }
+  # }
 }
 
 resource "aws_s3_bucket_policy" "this" {
