@@ -10,7 +10,7 @@ resource "aws_s3_bucket" "this" {
   bucket = "${local.name_prefix}static-website-${random_pet.this.id}"
   tags   = local.default_tags
 }
-/*
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
   bucket = aws_s3_bucket.this.bucket
 
@@ -20,7 +20,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
     }
   }
 }
-
+/*
 resource "aws_s3_bucket_public_access_block" "this" {
   bucket = aws_s3_bucket.this.id
 
@@ -194,46 +194,9 @@ data "aws_iam_policy_document" "this" {
       }
     }
   }
-
-  # dynamic "statement" {
-  #   for_each = length(local.config.trusted_accounts) > 0 ? [1] : []
-
-  #   content {
-  #     sid = "Allowed cross account sync"
-
-  #     principals {
-  #       type        = "AWS"
-  #       identifiers = [for acc in local.config.trusted_accounts : "arn:aws:iam::${acc}:root"]
-  #     }
-
-  #     actions = [
-  #       "s3:DeleteObject",
-  #       "s3:GetBucketLocation",
-  #       "s3:GetObject",
-  #       "s3:ListBucket",
-  #       "s3:PutObject"
-  #     ]
-
-  #     resources = [
-  #       "${aws_s3_bucket.this.arn}",
-  #       "${aws_s3_bucket.this.arn}/*",
-  #     ]
-  #   }
-  # }
 }
 
 resource "aws_s3_bucket_policy" "this" {
   bucket = aws_s3_bucket.this.id
   policy = data.aws_iam_policy_document.this.json
 }
-
-# resource "aws_s3_object" "this" {
-#   count = local.config.deploy_sample_document ? 1 : 0
-
-#   bucket       = aws_s3_bucket.this.bucket
-#   key          = "index.html"
-#   source       = "${path.module}/sample/index.html"
-#   content_type = "text/html"
-#   # kms_key_id   = aws_kms_key.this.arn
-#   bucket_key_enabled = true
-# }
