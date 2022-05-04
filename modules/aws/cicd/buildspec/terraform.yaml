@@ -11,9 +11,9 @@ phases:
       - cd $SRC
       - tfswitch
 
-  # pre_build:
-  #   commands:
-  #     - terrascan init
+  pre_build:
+    commands:
+      - terrascan init
   #     - terrascan scan
 
   build:
