@@ -11,7 +11,7 @@ resource "aws_cloudfront_distribution" "this" {
   is_ipv6_enabled     = true
   price_class         = "PriceClass_100"
   default_root_object = local.config.index_document
-  aliases             = [] //concat([local.config.domain_name], tolist(local.config.domain_alias))
+  aliases             = concat([local.config.domain_name], tolist(local.config.domain_alias))
   wait_for_deployment = false
   comment             = "Cloudfront CDN for ${local.name_prefix}website"
   tags                = local.default_tags
@@ -46,7 +46,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "viewer_certificate" {
-    for_each = aws_acm_certificate.this[0].status != "issued" ? [1] : []
+    for_each = aws_acm_certificate.this[0].status != "ISSUED" ? [1] : []
 
     content {
       cloudfront_default_certificate = true
@@ -54,7 +54,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "viewer_certificate" {
-    for_each = aws_acm_certificate.this[0].status == "issued" ? [1] : []
+    for_each = aws_acm_certificate.this[0].status == "ISSUED" ? [1] : []
 
     content {
       acm_certificate_arn      = aws_acm_certificate.this[0].arn
