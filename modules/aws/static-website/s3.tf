@@ -73,20 +73,20 @@ resource "aws_s3_bucket_website_configuration" "this" {
 
 data "aws_iam_policy_document" "this" {
 
-  statement {
-    sid    = "Allowed public read"
-    effect = "Allow"
-    resources = [
-      "${aws_s3_bucket.this.arn}/*"
-    ]
-    actions = ["s3:GetObject"]
+  # statement {
+  #   sid    = "Allowed public read"
+  #   effect = "Allow"
+  #   resources = [
+  #     "${aws_s3_bucket.this.arn}/*"
+  #   ]
+  #   actions = ["s3:GetObject"]
 
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
+  #   principals {
+  #     type        = "*"
+  #     identifiers = ["*"]
+  #   }
 
-  }
+  # }
 
   # statement {
   #   sid    = "Allow SSL Requests Only"
