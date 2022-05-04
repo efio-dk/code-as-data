@@ -10,7 +10,7 @@ phases:
     commands:
       ${env_vars_snippet}
       ${assume_role_snippet}
-      
+
   build:
     commands:
-      - aws s3 sync . s3://$DST --delete --sse
+      - aws s3 sync . s3://$DST --delete
