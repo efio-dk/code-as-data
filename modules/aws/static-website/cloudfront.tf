@@ -48,7 +48,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   viewer_certificate {
-    for_each = aws_acm_certificate[0].this.status != "issued" ? [1] : []
+    for_each = aws_acm_certificate.this[0].status != "issued" ? [1] : []
 
     content {
       cloudfront_default_certificate = true
@@ -56,10 +56,10 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "viewer_certificate" {
-    for_each = aws_acm_certificate[0].this.status == "issued" ? [1] : []
+    for_each = aws_acm_certificate.this[0].status == "issued" ? [1] : []
 
     content {
-      acm_certificate_arn      = aws_acm_certificate[0].this.arn
+      acm_certificate_arn      = aws_acm_certificate.this[0].arn
       ssl_support_method       = "sni-only"
       minimum_protocol_version = "TLSv1"
     }
