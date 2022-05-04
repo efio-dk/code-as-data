@@ -47,7 +47,7 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
-  viewer_certificate {
+  dynamic "viewer_certificate" {
     for_each = aws_acm_certificate.this[0].status != "issued" ? [1] : []
 
     content {
