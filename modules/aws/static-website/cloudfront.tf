@@ -13,7 +13,8 @@ resource "aws_cloudfront_distribution" "this" {
   is_ipv6_enabled     = true
   price_class         = "PriceClass_100"
   default_root_object = local.config.index_document
-  aliases             = [] // [local.config.domain_name]
+  # aliases             = [] // [local.config.domain_name]
+  aliases             = concat([local.config.domain_name], local.config.domain_alias)
   wait_for_deployment = false
   comment             = "Cloudfront CDN for ${local.name_prefix}website"
   tags                = local.default_tags
