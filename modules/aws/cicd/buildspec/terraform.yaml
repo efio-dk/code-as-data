@@ -13,7 +13,7 @@ phases:
 
   pre_build:
     commands:
-      - terrascan init
+      - terraform init
   #     - terrascan scan
 
   build:
