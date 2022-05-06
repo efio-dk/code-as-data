@@ -1,8 +1,11 @@
 FROM amazon/aws-cli
 
+ENV LC_CTYPE=en_US.utf-8
+
 # RUN yum -y install unzip tar gzip shadow-utils.x86_64 iptables openssl python3 pip java jq git hugo
 RUN yum upgrade -y \
-    && yum -y install unzip tar gzip shadow-utils.x86_64 openssl python3 pip jq git \
+    && yum update -y \
+    && yum -y install iptables unzip tar gzip shadow-utils.x86_64 openssl python3 pip jq git \
     && pip3 install yq
 
 # ==== Hugo ====
@@ -45,6 +48,8 @@ RUN set -ex \
     && docker-compose version
 # ==== Docker 20.10.9 END ====
 
+RUN curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh | bash
+
 # ==== Terraform ====
 # https://releases.hashicorp.com/terraform/1.1.2/terraform_1.1.2_SHA256SUMS
 ENV TF_BUCKET="releases.hashicorp.com" \
@@ -57,6 +62,15 @@ RUN curl -s -qL -o terraform_install.zip "https://${TF_BUCKET}/terraform/${TF_VE
     && rm terraform_install.zip \
     $$ terraform --version
 # ==== Terraform END ====
+
+# ==== NodeJS ====
+ENV NODE_VERSION=14
+
+RUN curl -sL https://rpm.nodesource.com/setup_${NODE_VERSION}.x | bash - \
+    && yum install -y nodejs \
+    && npm install -g npm 
+
+# ==== NodeJS END ====
 
 COPY dockerd-entrypoint.sh /usr/local/bin/
 RUN chmod +x "/usr/local/bin/dockerd-entrypoint.sh"

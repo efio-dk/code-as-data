@@ -1,5 +1,5 @@
 resource "aws_iam_role" "this" {
-  name = "${local.config.name_prefix}cicd-role"
+  name = "${local.name_prefix}cicd-role"
   tags = local.default_tags
 
   assume_role_policy = jsonencode({
@@ -8,8 +8,8 @@ resource "aws_iam_role" "this" {
       "Effect" : "Allow",
       "Principal" : {
         "Service" : [
-          "codepipeline.amazonaws.com",
           "codebuild.amazonaws.com",
+          "codepipeline.amazonaws.com",
         ]
       },
       "Action" : "sts:AssumeRole"
@@ -18,7 +18,7 @@ resource "aws_iam_role" "this" {
 
   managed_policy_arns = setunion(
     try(local.config.iam_role_permissions.power_user ? ["arn:aws:iam::aws:policy/PowerUserAccess"] : [], []),
-    try(local.config.iam_role_permissions.managed_policies, [])
+    try(local.config.iam_role_permissions.managed_policies != null ? local.config.iam_role_permissions.managed_policies : [], [])
   )
 
   inline_policy {
@@ -40,9 +40,9 @@ resource "aws_iam_role" "this" {
       #       "iam:*"
       #     ],
       #     "Resource" : [
-      #       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*",
-      #       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/*",
-      #       "arn:aws:ecr::${data.aws_caller_identity.current.account_id}:instance-profile/*"
+      #       "arn:aws:iam::${local.account_id}:role/*",
+      #       "arn:aws:iam::${local.account_id}:policy/*",
+      #       "arn:aws:ecr::${local.account_id}:instance-profile/*"
       #     ] # TODO - consider adding boundaty permissions to avoid creating a user
       #   }
       # ]
@@ -65,9 +65,9 @@ resource "aws_iam_role" "this" {
               "iam:*"
             ],
             "Resource" : [
-              "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*",
-              "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/*",
-              "arn:aws:ecr::${data.aws_caller_identity.current.account_id}:instance-profile/*"
+              "arn:aws:iam::${local.account_id}:role/*",
+              "arn:aws:iam::${local.account_id}:policy/*",
+              "arn:aws:ecr::${local.account_id}:instance-profile/*"
             ]
           }
         ]

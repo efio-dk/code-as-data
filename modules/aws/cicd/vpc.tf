@@ -1,11 +1,3 @@
-data "aws_region" "current" {}
-
-data "aws_caller_identity" "current" {}
-
-data "aws_availability_zones" "available" {
-  state = "available"
-}
-
 data "aws_subnet" "this" {
   for_each = local.config.subnet_ids
 
@@ -21,8 +13,8 @@ data "aws_vpc" "this" {
 resource "aws_security_group" "this" {
   count = length(data.aws_vpc.this) > 0 ? 1 : 0
 
-  name        = "${local.config.name_prefix}codebuild"
-  description = "Used for ${local.config.name_prefix}codebuild projects"
+  name        = "${local.name_prefix}codebuild"
+  description = "Used for ${local.name_prefix}codebuild projects"
   vpc_id      = data.aws_vpc.this[count.index].id
 
   egress {
@@ -34,6 +26,6 @@ resource "aws_security_group" "this" {
   }
 
   tags = merge(local.default_tags, {
-    Name = "${local.config.name_prefix}codebuild"
+    Name = "${local.name_prefix}codebuild"
   })
 }

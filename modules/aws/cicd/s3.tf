@@ -1,9 +1,9 @@
 resource "random_pet" "this" {
-  prefix = "${local.config.name_prefix}artifact"
+  prefix = "${local.name_prefix}artifact"
   keepers = {
-    account = data.aws_region.current.name
-    region  = data.aws_caller_identity.current.account_id
-    name    = local.config.name_prefix
+    account = local.account_id
+    region  = local.region_name
+    name    = local.name_prefix
   }
 }
 

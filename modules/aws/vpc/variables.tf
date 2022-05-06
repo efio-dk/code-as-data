@@ -1,22 +1,7 @@
-variable "default_tags" {
-  description = "A map of default tags, that will be applied to all resources applicable."
-  type        = map(string)
-  default     = {}
-}
-
 variable "config" {
   description = ""
   type = object({
-    region  = optional(string)
-    profile = optional(string)
-    assume_role = optional(object({
-      role_arn     = string
-      session_name = string
-      external_id  = string
-    }))
-
-    name_prefix = optional(string) # [a-z]
-    vpc_cidr    = string
+    vpc_cidr = string
 
     availability_zone_count = optional(number)
     public_subnet_bits      = optional(number)
@@ -24,12 +9,11 @@ variable "config" {
 
     nat_mode                   = optional(string)
     flowlogs_retention_in_days = optional(number)
-  })
 
-  validation {
-    condition     = var.config.name_prefix == null || length(try(regexall("^[a-zA-Z-]*$", var.config.name_prefix), " ")) > 0
-    error_message = "`config.name_prefix` must satisfy pattern `^[a-zA-Z-]+$`."
-  }
+    bastion_security_groups = optional(set(string))
+    trusted_ip_cidrs        = optional(set(string))
+    trusted_ssh_public_keys = optional(set(string))
+  })
 
   validation {
     error_message = "`config.availability_zone_count` is invalid. Must be a number between 1 and 3."

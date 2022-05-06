@@ -1,5 +1,5 @@
 resource "aws_cloudfront_origin_access_identity" "this" {
-  comment = "CloudFront identity for ${local.config.name_prefix}website"
+  comment = "CloudFront identity for ${local.name_prefix}website"
 }
 
 resource "aws_cloudfront_distribution" "this" {
@@ -11,8 +11,9 @@ resource "aws_cloudfront_distribution" "this" {
   is_ipv6_enabled     = true
   price_class         = "PriceClass_100"
   default_root_object = local.config.index_document
-  aliases             = [] // [local.config.domain_name]
+  aliases             = aws_acm_certificate.this[0].status != "ISSUED" ? [] : concat([local.config.domain_name], tolist(local.config.domain_alias))
   wait_for_deployment = false
+  comment             = "Cloudfront CDN for ${local.name_prefix}website"
   tags                = local.default_tags
 
   origin {
@@ -44,18 +45,23 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
-  viewer_certificate {
-    cloudfront_default_certificate = true
+  dynamic "viewer_certificate" {
+    for_each = aws_acm_certificate.this[0].status != "ISSUED" ? [1] : []
+
+    content {
+      cloudfront_default_certificate = true
+    }
   }
 
-  # dynamic "viewer_certificate" {
-  #   for_each = local.acm_certs
-  #   content {
-  #     acm_certificate_arn      = data.aws_acm_certificate.acm_cert[0].arn
-  #     ssl_support_method       = "sni-only"
-  #     minimum_protocol_version = "TLSv1"
-  #   }
-  # }
+  dynamic "viewer_certificate" {
+    for_each = aws_acm_certificate.this[0].status == "ISSUED" ? [1] : []
+
+    content {
+      acm_certificate_arn      = aws_acm_certificate.this[0].arn
+      ssl_support_method       = "sni-only"
+      minimum_protocol_version = "TLSv1"
+    }
+  }
 
   # custom_error_response {
   #   error_code            = 403

@@ -1,23 +1,22 @@
 resource "random_pet" "this" {
   keepers = {
-    account = data.aws_region.current.name
-    region  = data.aws_caller_identity.current.account_id
-    name    = local.config.name_prefix
+    account = local.region_name
+    region  = local.account_id
+    name    = local.name_prefix
   }
 }
 
 resource "aws_s3_bucket" "this" {
-  bucket = "${local.config.name_prefix}${local.config.domain_name}-${random_pet.this.id}"
+  bucket = "${local.name_prefix}static-website-${random_pet.this.id}"
   tags   = local.default_tags
 }
-/*
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
   bucket = aws_s3_bucket.this.bucket
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.this.arn
-      sse_algorithm     = "aws:kms"
+      sse_algorithm = "AES256"
     }
   }
 }
@@ -25,24 +24,22 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
 resource "aws_s3_bucket_public_access_block" "this" {
   bucket = aws_s3_bucket.this.id
 
-  block_public_acls       = true
-  block_public_policy     = true
   ignore_public_acls      = true
-  restrict_public_buckets = true
+  block_public_acls       = true
+  block_public_policy     = false
+  restrict_public_buckets = false
 }
 
 resource "aws_s3_bucket_acl" "this" {
   bucket = aws_s3_bucket.this.id
   acl    = "private"
 }
-*/
+
 resource "aws_s3_bucket_versioning" "this" {
   bucket = aws_s3_bucket.this.id
   versioning_configuration {
     status = "Enabled"
-    # mfa_delete = "Enabled"
   }
-  # mfa
 }
 
 resource "aws_s3_bucket_website_configuration" "this" {
@@ -55,15 +52,6 @@ resource "aws_s3_bucket_website_configuration" "this" {
   error_document {
     key = local.config.error_document
   }
-
-  # routing_rule {
-  #   condition {
-  #     key_prefix_equals = "docs/"
-  #   }
-  #   redirect {
-  #     replace_key_prefix_with = "documents/"
-  #   }
-  # }
 }
 
 # resource "aws_s3_bucket_cors_configuration" "this" {
@@ -84,7 +72,6 @@ resource "aws_s3_bucket_website_configuration" "this" {
 # }
 
 data "aws_iam_policy_document" "this" {
-  /*
   statement {
     sid    = "Allow SSL Requests Only"
     effect = "Deny"
@@ -121,8 +108,8 @@ data "aws_iam_policy_document" "this" {
 
     condition {
       test     = "StringNotEquals"
-      variable = "s3:x-amz-server-side-encryption-aws-kms-key-id"
-      values   = [aws_kms_key.this.arn]
+      variable = "s3:x-amz-server-side-encryption"
+      values   = ["AES256"]
     }
   }
 
@@ -145,7 +132,7 @@ data "aws_iam_policy_document" "this" {
       values   = ["true"]
     }
   }
-*/
+
   statement {
     sid = "Allow CloudFront Browsing"
 
@@ -194,14 +181,4 @@ data "aws_iam_policy_document" "this" {
 resource "aws_s3_bucket_policy" "this" {
   bucket = aws_s3_bucket.this.id
   policy = data.aws_iam_policy_document.this.json
-}
-
-resource "aws_s3_object" "this" {
-  count = local.config.deploy_sample_document ? 1 : 0
-
-  bucket       = aws_s3_bucket.this.bucket
-  key          = "index.html"
-  source       = "${path.module}/sample/index.html"
-  content_type = "text/html"
-  # kms_key_id   = aws_kms_key.this.arn
 }

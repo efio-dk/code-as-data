@@ -1,8 +1,3 @@
-output "debug" {
-  description = "This will be used for debug purposes only."
-  value       = local.debug
-}
-
 output "kms_key_id" {
   description = "KMS CMK used by the CI/CD module."
   value       = aws_kms_key.this.id
@@ -21,9 +16,4 @@ output "artifact_bucket" {
 output "git_connection_status" {
   description = "The status of CodeStar connections. Use web console to update pending connections."
   value       = { for k, v in aws_codestarconnections_connection.this : v.name => v.connection_status }
-}
-
-output "codebuild_webhook_url" {
-  description = "The url of the codebuild webhook."
-  value       = { for k, v in aws_codebuild_webhook.this : k => v.url }
 }
