@@ -14,8 +14,8 @@ phases:
   pre_build:
     commands:
       - terraform init
-  #     - terrascan scan
+      # - terrascan scan
 
   build:
     commands:
-      - terraform apply -var-file=$${ENV}.tfvars -auto-approve
+      - terraform apply -auto-approve $ARGS
