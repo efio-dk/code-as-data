@@ -10,8 +10,8 @@ phases:
     commands:
       ${env_vars_snippet}
       ${assume_role_snippet}
-      - PATHS=$${DST:-\"/*\"}
+      - PATHS=$${DST:-/*}
 
   build:
     commands:
-      - aws cloudfront create-invalidation --distribution-id $SRC --paths $PATHS
+      - aws cloudfront create-invalidation --distribution-id $SRC --paths "$PATHS"
