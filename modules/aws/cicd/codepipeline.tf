@@ -75,7 +75,6 @@ resource "aws_codepipeline" "this" {
         }
       }
     }
-
   }
 
   dynamic "stage" {

@@ -16,6 +16,7 @@ locals {
     s3_deploy : "deploy"
 
     cloudfront : "release"
+    asg_refresh : "release"
   }
 
   stage_order = {
