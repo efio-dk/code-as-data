@@ -29,5 +29,8 @@ variable "config" {
       managed_policies = optional(list(string))
       inline_policies  = optional(map(string))
     }))
+
+    domain_name         = optional(string)
+    acm_certificate_arn = optional(string)
   })
 }

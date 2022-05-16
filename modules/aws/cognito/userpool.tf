@@ -133,6 +133,52 @@ resource "aws_cognito_user_pool" "this" {
     sms_message           = "Your verification code is {####}."
   }
 
+  dynamic "schema" {
+    for_each = { for k, v in local.config.schema : k => v if !contains(["Number", "String"], v.attribute_data_type) }
+
+    content {
+      name                     = schema.key
+      attribute_data_type      = schema.value.attribute_data_type
+      required                 = schema.value.required
+      developer_only_attribute = schema.value.developer_only_attribute
+      mutable                  = schema.value.mutable
+    }
+  }
+
+  dynamic "schema" {
+    for_each = { for k, v in local.config.schema : k => v if "String" == v.attribute_data_type }
+
+    content {
+      name                     = schema.key
+      attribute_data_type      = schema.value.attribute_data_type
+      required                 = schema.value.required
+      developer_only_attribute = schema.value.developer_only_attribute
+      mutable                  = schema.value.mutable
+
+      string_attribute_constraints {
+        max_length = schema.value.string_attribute_constraints != null ? schema.value.string_attribute_constraints.max_length : null
+        min_length = schema.value.string_attribute_constraints != null ? schema.value.string_attribute_constraints.min_length : null
+      }
+    }
+  }
+
+  dynamic "schema" {
+    for_each = { for k, v in local.config.schema : k => v if "Number" == v.attribute_data_type }
+
+    content {
+      name                     = schema.key
+      attribute_data_type      = schema.value.attribute_data_type
+      required                 = schema.value.required
+      developer_only_attribute = schema.value.developer_only_attribute
+      mutable                  = schema.value.mutable
+
+      number_attribute_constraints {
+        max_value = schema.value.number_attribute_constraints != null ? schema.value.number_attribute_constraints.max_value : null
+        min_value = schema.value.number_attribute_constraints != null ? schema.value.number_attribute_constraints.min_value : null
+      }
+    }
+  }
+
   # App integration
   # schema {#} - (Optional) Configuration block for the schema attributes of a user pool. Detailed below. Schema attributes from the standard attribute set only need to be specified if they are different from the default configuration. Attributes can be added, but not modified or removed. Maximum of 50 attributes.
   #   attribute_data_type - (Required) Attribute data type. Must be one of Boolean, Number, String, DateTime.
@@ -143,34 +189,7 @@ resource "aws_cognito_user_pool" "this" {
   #   required - (Optional) Whether a user pool attribute is required. If the attribute is required and the user does not provide a value, registration or sign-in will fail.
   #   string_attribute_constraints - (Required when attribute_data_type is String) Constraints for an attribute of the string type. Detailed below.
   # }
-
-  # User pool properties
-  # lambda_config { #- (Optional) Configuration block for the AWS Lambda triggers associated with the user pool. Detailed below.
-  #   create_auth_challenge - (Optional) ARN of the lambda creating an authentication challenge.
-  #   custom_message - (Optional) Custom Message AWS Lambda trigger.
-  #   define_auth_challenge - (Optional) Defines the authentication challenge.
-  #   post_authentication - (Optional) Post-authentication AWS Lambda trigger.
-  #   post_confirmation - (Optional) Post-confirmation AWS Lambda trigger.
-  #   pre_authentication - (Optional) Pre-authentication AWS Lambda trigger.
-  #   pre_sign_up - (Optional) Pre-registration AWS Lambda trigger.
-  #   pre_token_generation - (Optional) Allow to customize identity token claims before token generation.
-  #   user_migration - (Optional) User migration Lambda config type.
-  #   verify_auth_challenge_response - (Optional) Verifies the authentication challenge response.
-  #   kms_key_id - (Optional) The Amazon Resource Name of Key Management Service Customer master keys. Amazon Cognito uses the key to encrypt codes and temporary passwords sent to CustomEmailSender and CustomSMSSender.
-  #   custom_email_sender {#- (Optional) A custom email sender AWS Lambda trigger. See custom_email_sender Below.
-  #     lambda_arn - (Required) The Lambda Amazon Resource Name of the Lambda function that Amazon Cognito triggers to send email notifications to users.
-  #     lambda_version - (Required) The Lambda version represents the signature of the "request" attribute in the "event" information Amazon Cognito passes to your custom email Lambda function. The only supported value is V1_0.
-  #   }
-  #   custom_sms_sender {#- (Optional) A custom SMS sender AWS Lambda trigger. See custom_sms_sender Below.
-  #     lambda_arn - (Required) The Lambda Amazon Resource Name of the Lambda function that Amazon Cognito triggers to send SMS notifications to users.
-  #     lambda_version - (Required) The Lambda version represents the signature of the "request" attribute in the "event" information Amazon Cognito passes to your custom SMS Lambda function. The only supported value is V1_0.
-  #   }
-  # }
 }
-
-#   user_pool_add_ons {# - (Optional) Configuration block for user pool add-ons to enable user pool advanced security mode features. Detailed below.
-#     advanced_security_mode - (Required) Mode for advanced security, must be one of OFF, AUDIT or ENFORCED.
-#   }
 
 resource "aws_cognito_user_pool_domain" "this" {
   domain          = local.config.domain
