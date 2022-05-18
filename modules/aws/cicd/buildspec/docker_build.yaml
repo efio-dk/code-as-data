@@ -10,6 +10,7 @@ phases:
     commands:
       - /usr/local/bin/dockerd-entrypoint.sh
       - REGISTRY=$DST
+      ${env_vars_snippet}
       ${assume_role_snippet}
 
   pre_build:
@@ -24,7 +25,7 @@ phases:
         if [ ! -z "$docker_username" ]
         then
           echo Docker login
-          #docker login --username $docker_username --password $docker_password
+          docker login --username $docker_username --password $docker_password
         fi
 
   build:
@@ -45,5 +46,4 @@ phases:
           aws ecr get-login-password --region ${aws_region} | docker login --username AWS --password-stdin ${aws_account}.dkr.ecr.${aws_region}.amazonaws.com
           docker push $REGISTRY --all-tags
         fi
-      - aws sts get-caller-identity
       - if [ -f "$SRC/docker-compose.yaml" ]; then aws s3 cp $SRC/docker-compose.yaml s3://${artifact_bucket}/$${APP}/$${ACTION}/ --sse aws:kms --sse-kms-key-id ${kms_id}; fi

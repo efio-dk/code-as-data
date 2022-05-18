@@ -65,7 +65,7 @@ resource "aws_cognito_user_pool" "this" {
   }
 
   ## Multi-factor authentication
-  mfa_configuration = "ON" #[ON|OFF|OPTIONAL]
+  mfa_configuration = local.config.optional_mfa ? "OPTIONAL" : "ON"
   software_token_mfa_configuration {
     enabled = true
   }
