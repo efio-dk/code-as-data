@@ -1,11 +1,10 @@
-resource "aws_organizations_organization" "organization" {
-}
+data "aws_organizations_organization" "organization" {}
 
 resource "aws_organizations_organizational_unit" "units" {
   for_each = toset(var.config.units)
 
   name      = each.value
-  parent_id = aws_organizations_organization.organization.roots[0].id
+  parent_id = data.aws_organizations_organization.organization.roots[0].id
 }
 
 resource "aws_organizations_account" "accounts" {

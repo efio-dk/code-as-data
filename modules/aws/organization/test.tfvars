@@ -1,6 +1,6 @@
 config = {
   units = ["ops", "config", "admin"]
-  
+
   accounts = {
     billing = {
       email     = "admin+billing@acmecorp.com"

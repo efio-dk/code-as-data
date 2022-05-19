@@ -17,7 +17,8 @@ variable "config" {
     })))
 
     account_assignments = optional(list(object({
-      account             = string
+      account             = optional(string)
+      account_id          = optional(string)
       permission_set      = string
       principal_name      = string
       principal_type      = string
@@ -26,14 +27,14 @@ variable "config" {
 
   validation {
     condition = alltrue([for k, v in var.config.accounts :
-      can(v.unit) ? contains(var.config.units, v.unit) : true
+      v.unit != null ? contains(var.config.units, v.unit) : true
     ])
     error_message = "One or more accounts referes to a non existing unit."
   }
 
   validation {
     condition = alltrue([for k, v in var.config.account_assignments :
-      lookup(var.config.accounts, v.account, null) != null
+      v.account_id == null ? lookup(var.config.accounts, v.account, null) != null : true
     ])
     error_message = "One or more account_assignments referes to a non existing account."
   }
