@@ -53,8 +53,8 @@ RUN curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/rele
 # ==== Terraform ====
 # https://releases.hashicorp.com/terraform/1.1.2/terraform_1.1.2_SHA256SUMS
 ENV TF_BUCKET="releases.hashicorp.com" \
-    TF_SHA256="734efa82e2d0d3df8f239ce17f7370dabd38e535d21e64d35c73e45f35dfa95c" \
-    TF_VERSION=1.1.2
+    TF_SHA256="b87de03adbdfdff3c2552c8c8377552d0eecd787154465100cf4e29de4a7be1f" \
+    TF_VERSION=1.2.0
 
 RUN curl -s -qL -o terraform_install.zip "https://${TF_BUCKET}/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip" \
     && echo "${TF_SHA256} *terraform_install.zip" | sha256sum -c - \
