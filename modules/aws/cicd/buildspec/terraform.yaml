@@ -10,13 +10,12 @@ phases:
     commands:
       - cd $SRC
       - tfswitch || echo .
+      ${env_vars_snippet}
 
   pre_build:
     commands:
-      # - export TF_WORKSPACE=$ENV
       - export TF_INPUT=0
       - terraform init
-      # - terrascan scan
 
   build:
     commands:
