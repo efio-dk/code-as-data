@@ -1,4 +1,10 @@
+data "aws_region" "current" {}
+
+data "aws_organizations_organization" "organization" {}
+
 locals {
+  master_account_id = tolist(setsubtract(data.aws_organizations_organization.organization.accounts, data.aws_organizations_organization.organization.non_master_accounts))[0].id
+
   sso_instance_arn  = tolist(data.aws_ssoadmin_instances.this.arns)[0]
   identity_store_id = tolist(data.aws_ssoadmin_instances.this.identity_store_ids)[0]
 
@@ -16,10 +22,23 @@ locals {
     for policy in local.managed_policy_attachments : "${policy.policy_set}.${policy.policy_arn}" => policy
   }
 
-  assignment_map = {
+  assignment_map = var.config.account_assignments != null ? {
     for a in var.config.account_assignments :
     format("%v-%v-%v-%v", a.account_id != null ? a.account_id : a.account, substr(a.principal_type, 0, 1), a.principal_name, a.permission_set) => a
-  }
+  } : {}
   group_list = toset([for mapping in var.config.account_assignments : mapping.principal_name if mapping.principal_type == "GROUP"])
   user_list  = toset([for mapping in var.config.account_assignments : mapping.principal_name if mapping.principal_type == "USER"])
+
+  targets_map = var.config.policies != null ? { for t in flatten([
+    for policy_name, policy in var.config.policies : [
+      for target_name, target in policy.targets : {
+        policy_name = policy_name
+        target_name = target_name
+        target      = target.target
+        target_type = target.target_type
+    }]]) : "${t.policy_name}/${t.target_name}" => t 
+  } : {}
+
+  cloudtrail_name    = "elucid-cloudtrail"
+  cloudtrail_s3_name = "elucid-cloudtrail"
 }

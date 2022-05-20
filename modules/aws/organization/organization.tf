@@ -1,5 +1,3 @@
-data "aws_organizations_organization" "organization" {}
-
 resource "aws_organizations_organizational_unit" "units" {
   for_each = toset(var.config.units)
 

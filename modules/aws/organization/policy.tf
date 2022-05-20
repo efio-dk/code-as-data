@@ -1,17 +1,5 @@
-locals {
-  targets_map = { for t in flatten([
-    for policy_name, policy in var.config.policies : [
-      for target_name, target in policy.targets : {
-        policy_name = policy_name
-        target_name = target_name
-        target      = target.target
-        target_type = target.target_type
-    }]]) : "${t.policy_name}/${t.target_name}" => t
-  }
-}
-
 resource "aws_organizations_policy" "this" {
-  for_each = var.config.policies
+  for_each = var.config.policies != null ? var.config.policies : {}
 
   name    = each.key
   content = each.value.content
