@@ -23,6 +23,14 @@ variable "config" {
       principal_name      = string
       principal_type      = string
     })))
+
+    policies = optional(map(object({
+      content = string
+      targets = optional(list(object({
+        target      = optional(string)
+        target_type = string
+      })))
+    })))
   })
 
   validation {
