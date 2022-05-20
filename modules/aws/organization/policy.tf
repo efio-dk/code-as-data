@@ -1,7 +1,7 @@
 locals {
   targets_map = { for t in flatten([
     for policy_name, policy in var.config.policies : [
-      for target_name, target in policy.target : {
+      for target_name, target in policy.targets : {
         policy_name = policy_name
         target_name = target_name
         target      = target.target
