@@ -67,10 +67,10 @@ resource "aws_cloudfront_distribution" "this" {
     for_each = [400, 403, 404, 405, 414, 416, 500, 501, 502, 503, 504]
 
     content {
-      error_code            = custom_error_response.key
-      response_code         = custom_error_response.key
+      error_code            = custom_error_response.value
+      response_code         = custom_error_response.value
       error_caching_min_ttl = 10
-      response_page_path    = coalesce(local.config.error_document, "/")
+      response_page_path    = coalesce("/${local.config.error_document}", "/")
     }
   }
 }
