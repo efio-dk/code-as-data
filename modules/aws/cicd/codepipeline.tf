@@ -266,6 +266,11 @@ resource "aws_codepipeline" "this" {
                   "type" : "PLAINTEXT"
                 },
                 {
+                  "name" : "APP",
+                  "value" : action.value.application,
+                  "type" : "PLAINTEXT"
+                },
+                {
                   "name" : "SRC",
                   "value" : local.application[action.value.application].action[action.value.action].src,
                   "type" : "PLAINTEXT"
