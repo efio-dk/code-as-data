@@ -287,66 +287,6 @@ resource "aws_codepipeline" "this" {
     }
   }
 
-  # dynamic "stage" {
-  #   for_each = length([
-  #     for a in values(local.deploy_actions) : a
-  #     if a.name == each.value.name
-  #   ]) > 0 ? [1] : []
-
-  #   content {
-  #     name = "DeployTo${title(each.value.trigger)}"
-
-  #     dynamic "action" {
-  #       for_each = { for k, a in local.deploy_actions : k => a if a.name == each.value.name }
-
-  #       content {
-  #         name            = "${action.value.action}-${action.value.type}"
-  #         category        = "Build"
-  #         owner           = "AWS"
-  #         provider        = "CodeBuild"
-  #         input_artifacts = ["source_output"]
-  #         version         = "1"
-  #         run_order       = local.codebuild_action_projects[action.value.type].run_order
-  #         namespace       = "ns-${action.value.action}"
-
-  #         configuration = {
-  #           ProjectName = aws_codebuild_project.action[action.value.type].name
-  #           #   EnvironmentVariables = trimspace(jsonencode(concat(
-  #           #     [for k, a in local.deploy_actions : {
-  #           #       "name" : "${a.action}",
-  #           #       "value" : "#{ns-${a.action}.OUTPUT}",
-  #           #       "type" : "PLAINTEXT"
-  #           #       } if a.name == each.value.name
-  #           #       && local.codebuild_action_projects[action.value.type].run_order > local.codebuild_action_projects[a.type].run_order
-  #           #     ],
-  #           #     [for key, val in var.env_vars[each.value.trigger] : {
-  #           #       "name"  = key,
-  #           #       "value" = val,
-  #           #       "type"  = "PLAINTEXT"
-  #           #     }],
-  #           #     [
-  #           #       {
-  #           #         "name" : "PIPELINE",
-  #           #         "value" : "${var.config.name_prefix}${each.value.name}-${each.value.trigger}",
-  #           #         "type" : "PLAINTEXT"
-  #           #       },
-  #           #       {
-  #           #         "name" : "SRC",
-  #           #         "value" : replace(action.value.path, "<env>", each.value.trigger),
-  #           #         "type" : "PLAINTEXT"
-  #           #       },
-  #           #       {
-  #           #         "name" : "ARGUMENTS",
-  #           #         "value" : action.value.arguments == null ? "" : replace(action.value.arguments, "$env", each.value.trigger),
-  #           #         "type" : "PLAINTEXT"
-  #           #       },
-  #           #   ])))
-  #         }
-  #       }
-  #     }
-  #   }
-  # }
-
   depends_on = [
     aws_s3_bucket.this,
     aws_iam_role.this
