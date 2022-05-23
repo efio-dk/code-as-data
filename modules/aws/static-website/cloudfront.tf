@@ -63,13 +63,16 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
-  # custom_error_response {
-  #   error_code            = 403
-  #   response_code         = 200
-  #   error_caching_min_ttl = 0
-  #   response_page_path    = "/"
-  # }
+  dynamic "custom_error_response" {
+    for_each = [400, 403, 404, 405, 414, 416, 500, 501, 502, 503, 504]
 
+    content {
+      error_code            = custom_error_response.key
+      response_code         = custom_error_response.key
+      error_caching_min_ttl = 10
+      response_page_path    = coalesce(local.config.error_document, "/")
+    }
+  }
 }
 
 data "aws_cloudfront_cache_policy" "this" {
