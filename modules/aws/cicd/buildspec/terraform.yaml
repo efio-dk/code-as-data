@@ -21,4 +21,3 @@ phases:
     commands:
       - terraform apply -auto-approve $(eval "echo $ARGS")
       - OUTPUT=$(terraform output -json | jq 'to_entries[] | {(.key):(.value.value)}' | jq -s add)
-      - aws ssm put-parameter --name "/$${ACTION}/env_vars/$${ENV}" --value '$OUTPUT' --overwrite --type SecureString
