@@ -13,4 +13,4 @@ phases:
 
   build:
     commands:
-      - aws s3 sync . s3://$DST --delete --sse
+      - aws s3 sync . $(eval "echo s3://$DST") --delete --sse

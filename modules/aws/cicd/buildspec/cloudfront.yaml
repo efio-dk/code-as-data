@@ -14,4 +14,4 @@ phases:
 
   build:
     commands:
-      - aws cloudfront create-invalidation --distribution-id $SRC --paths "$PATHS"
+      - aws cloudfront create-invalidation --distribution-id  $(eval "echo $SRC") --paths "$PATHS"
