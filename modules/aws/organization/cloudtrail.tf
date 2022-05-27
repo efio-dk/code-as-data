@@ -105,7 +105,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "versioning-bucket-config" {
     }
 
     dynamic "transition" {
-      for_each = local.config.cloudtrail_180days_deep_archive == false ? [1] : []
+      for_each = local.config.cloudtrail_180days_deep_archive == true ? [1] : []
       content {
         days          = 180
         storage_class = "DEEP_ARCHIVE"
@@ -113,7 +113,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "versioning-bucket-config" {
     }
 
     dynamic "expiration" {
-      for_each = local.config.cloudtrail_180days_deep_archive == true ? [1] : []
+      for_each = local.config.cloudtrail_180days_deep_archive == false ? [1] : []
       content {
         days = 180
       }
