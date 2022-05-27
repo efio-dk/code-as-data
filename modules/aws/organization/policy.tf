@@ -1,5 +1,5 @@
 resource "aws_organizations_policy" "this" {
-  for_each = var.config.policies != null ? var.config.policies : {}
+  for_each = local.config.policies != null ? local.config.policies : {}
 
   name    = each.key
   content = each.value.content

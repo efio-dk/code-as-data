@@ -13,10 +13,10 @@ data "aws_iam_policy_document" "kms" {
     }
 
     condition {
-      test     = "StringLike"
-      variable = "kms:EncryptionContext:aws:cloudtrail:arn"
+      test     = "StringEquals"
+      variable = "aws:PrincipalOrgID"
 
-      values = [for a in aws_organizations_account.accounts : "arn:aws:cloudtrail:*:${a.id}:trail/*"]
+      values = [data.aws_organizations_organization.organization.id]
     }
 
     condition {
@@ -56,10 +56,23 @@ data "aws_iam_policy_document" "kms" {
       "kms:Decrypt",
     ]
 
-    principals {
-      type        = "AWS"
-      identifiers = [for a in aws_organizations_account.accounts : "arn:aws:iam::${a.id}:root"]
+    # principals {
+    #   type        = "AWS"
+    #   identifiers = [for a in aws_organizations_account.accounts : "arn:aws:iam::${a.id}:root"]
+    # }
+
+    # principals {
+    #   type        = "AWS"
+    #   identifiers = [for a in aws_organizations_account.accounts : "arn:aws:iam::${a.id}:root"]
+    # }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalOrgID"
+
+      values = [data.aws_organizations_organization.organization.id]
     }
+
 
     condition {
       test     = "Null"

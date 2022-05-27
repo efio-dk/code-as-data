@@ -2,7 +2,7 @@ data "aws_ssoadmin_instances" "this" {}
 
 # === Create Permission Sets === #
 resource "aws_ssoadmin_permission_set" "this" {
-  for_each = var.config.permission_sets
+  for_each = local.config.permission_sets
 
   name             = each.key
   description      = each.value.description

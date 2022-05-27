@@ -1,6 +1,10 @@
 variable "config" {
   description = ""
   type = object({
+    cloudtrail_180days_deep_archive = bool
+    cloudtrail_name    = optional(string)
+    cloudtrail_s3_name = optional(string)
+
     units = optional(list(string))
     accounts = optional(map(object({
       email     = string

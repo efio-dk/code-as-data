@@ -92,3 +92,33 @@ data "aws_iam_policy_document" "cloudtrail" {
     }
   }
 }
+
+resource "aws_s3_bucket_lifecycle_configuration" "versioning-bucket-config" {
+  bucket = aws_s3_bucket.cloudtrail.bucket
+
+  rule {
+    id = "config"
+
+    transition {
+      days          = 30
+      storage_class = "ONEZONE_IA"
+    }
+
+    dynamic "transition" {
+      for_each = local.config.cloudtrail_180days_deep_archive == false ? [1] : []
+      content {
+        days          = 180
+        storage_class = "DEEP_ARCHIVE"
+      }
+    }
+
+    dynamic "expiration" {
+      for_each = local.config.cloudtrail_180days_deep_archive == true ? [1] : []
+      content {
+        days = 180
+      }
+    }
+
+    status = "Enabled"
+  }
+}

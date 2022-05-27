@@ -1,4 +1,6 @@
 config = {
+  cloudtrail_180days_deep_archive = false
+
   units = ["ops", "config", "admin"]
 
   accounts = {
