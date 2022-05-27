@@ -56,15 +56,11 @@ data "aws_iam_policy_document" "kms" {
       "kms:Decrypt",
     ]
 
-    # principals {
-    #   type        = "AWS"
-    #   identifiers = [for a in aws_organizations_account.accounts : "arn:aws:iam::${a.id}:root"]
-    # }
-
-    # principals {
-    #   type        = "AWS"
-    #   identifiers = [for a in aws_organizations_account.accounts : "arn:aws:iam::${a.id}:root"]
-    # }
+    # This gives access for all SSO user to decrypt the CloudLog trails by using a wildcard on the AWS sso reserved roles
+    principals {
+      type        = "AWS"
+      identifiers = [for a in aws_organizations_account.accounts : "arn:aws:iam::${a.id}:role/aws-reserved/sso.amazonaws.com/eu-central-1/AWSReservedSSO_*"]
+    }
 
     condition {
       test     = "StringEquals"
@@ -72,7 +68,6 @@ data "aws_iam_policy_document" "kms" {
 
       values = [data.aws_organizations_organization.organization.id]
     }
-
 
     condition {
       test     = "Null"
