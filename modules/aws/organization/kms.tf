@@ -1,5 +1,16 @@
 data "aws_iam_policy_document" "kms" {
   statement {
+    sid       = "Enable IAM User Permissions"
+    resources = ["*"]
+    actions   = ["kms:*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${local.master_account_id}:root"]
+    }
+  }
+
+  statement {
     sid       = "Allow CloudTrail to encrypt logs"
     effect    = "Allow"
     resources = ["arn:aws:kms:${data.aws_region.current.name}:${local.master_account_id}:key/*"]
