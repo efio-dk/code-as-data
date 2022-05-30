@@ -2,8 +2,51 @@ data "aws_region" "current" {}
 
 data "aws_organizations_organization" "organization" {}
 
+data "aws_iam_policy_document" "default_scp" {
+  statement {
+    sid = "DenyDisablingCloudtrail"
+    effect = "Deny"
+    actions = ["cloudtrail:StopLogging"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "DenyChangeToASpecificRole"
+    effect = "Deny"
+    actions = [
+        "iam:AttachRolePolicy",
+        "iam:DeleteRole",
+        "iam:DeleteRolePermissionsBoundary",
+        "iam:DeleteRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:PutRolePermissionsBoundary",
+        "iam:PutRolePolicy",
+        "iam:UpdateAssumeRolePolicy",
+        "iam:UpdateRole",
+        "iam:UpdateRoleDescription"
+    ]
+    resources = ["arn:aws:iam::*:role/${local.root_role_name}"]
+  }
+
+  statement {
+    sid = "DenyCreateConsoleLogin"
+    effect = "Deny"
+    actions = ["iam:CreateLoginProfile"]
+    resources = ["*"]
+  }
+}
+
 locals {
-  config = var.config
+  config = merge(var.config, {
+    policies = {
+      DefaultSCP = {
+        content = data.aws_iam_policy_document.default_scp.json
+        targets = [{target_type = "ROOT"}]
+      }
+    }
+  })
+
+  root_role_name = "OrganizationAccountAccessRole"
 
   master_account_id = tolist(setsubtract(data.aws_organizations_organization.organization.accounts, data.aws_organizations_organization.organization.non_master_accounts))[0].id
 
@@ -36,7 +79,7 @@ locals {
       for target_name, target in policy.targets : {
         policy_name = policy_name
         target_name = target_name
-        target      = target.target
+        target      = can(target.target) ? target.target : null
         target_type = target.target_type
     }]]) : "${t.policy_name}/${t.target_name}" => t 
   } : {}

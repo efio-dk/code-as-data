@@ -10,6 +10,6 @@ resource "aws_organizations_account" "accounts" {
 
   name      = each.key
   email     = each.value.email
-  role_name = each.value.role_name
+  role_name = local.root_role_name
   parent_id = each.value.unit != null ? aws_organizations_organizational_unit.units[each.value.unit].id : null
 }
