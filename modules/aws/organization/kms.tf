@@ -25,13 +25,6 @@ data "aws_iam_policy_document" "kms" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:PrincipalOrgID"
-
-      values = [data.aws_organizations_organization.organization.id]
-    }
-
-    condition {
-      test     = "StringEquals"
       variable = "aws:SourceArn"
 
       values = ["arn:aws:cloudtrail:${data.aws_region.current.name}:${local.master_account_id}:trail/${local.cloudtrail_name}"]
