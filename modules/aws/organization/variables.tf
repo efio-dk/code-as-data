@@ -7,9 +7,8 @@ variable "config" {
 
     units = optional(list(string))
     accounts = optional(map(object({
-      email     = string
-      role_name = string
-      unit      = optional(string)
+      email           = string
+      unit            = optional(string)
     })))
 
     permission_sets = optional(map(object({

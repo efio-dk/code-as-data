@@ -1,11 +1,15 @@
 resource "aws_cloudtrail" "cloudtrail" {
+  depends_on = [
+    aws_s3_bucket_policy.cloudtrail
+  ]
+
   name                          = local.cloudtrail_name
   s3_bucket_name                = aws_s3_bucket.cloudtrail.id
   include_global_service_events = true
   is_multi_region_trail         = true
   is_organization_trail         = true
   enable_log_file_validation    = true
-  kms_key_id                    = aws_kms_key.cloudtrail.key_id
+  kms_key_id                    = aws_kms_key.cloudtrail.arn
 }
 
 resource "aws_s3_bucket" "cloudtrail" {
@@ -13,7 +17,6 @@ resource "aws_s3_bucket" "cloudtrail" {
 
   versioning {
     enabled    = true
-    mfa_delete = true
   }
 
   server_side_encryption_configuration {
@@ -37,7 +40,6 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
 
 data "aws_iam_policy_document" "cloudtrail" {
   statement {
-    sid       = "AWSCloudTrailAclCheck"
     effect    = "Allow"
     resources = [aws_s3_bucket.cloudtrail.arn]
     actions = [
@@ -51,7 +53,6 @@ data "aws_iam_policy_document" "cloudtrail" {
   }
 
   statement {
-    sid       = "AWSCloudTrailWrite"
     effect    = "Allow"
     resources = ["${aws_s3_bucket.cloudtrail.arn}/AWSLogs/${local.master_account_id}/*"]
     actions = [
@@ -72,7 +73,6 @@ data "aws_iam_policy_document" "cloudtrail" {
   }
 
   statement {
-    sid       = "AWSCloudTrailWrite"
     effect    = "Allow"
     resources = ["${aws_s3_bucket.cloudtrail.arn}/AWSLogs/${data.aws_organizations_organization.organization.id}/*"]
     actions = [
