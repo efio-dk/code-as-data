@@ -58,7 +58,7 @@ data "aws_iam_policy" "AmazonEKS_CNI_Policy" {
   name = "AmazonEKS_CNI_Policy"
 }
 data "aws_iam_policy" "AmazonEC2ContainerRegistryReadOnly" {
-  name = "AmazonEKSVPCResourceController"
+  name = "AmazonEC2ContainerRegistryReadOnly"
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonEKSWorkerNodePolicy" {
