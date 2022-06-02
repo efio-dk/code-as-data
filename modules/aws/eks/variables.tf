@@ -9,5 +9,10 @@ variable "config" {
     worker_volume_size   = number
     api_allowed_ips      = list(string)
     addons               = optional(list(string))
+    aws_auth_configmap_data = optional(list(object({
+        rolearn  = string
+        username = string
+        groups   = list(string)
+    })))
   })
 }

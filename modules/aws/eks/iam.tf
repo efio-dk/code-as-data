@@ -8,6 +8,14 @@ data "aws_iam_policy_document" "cluster" {
       identifiers = ["eks.amazonaws.com"]
     }
   }
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${local.account_id}:root"]
+    }
+  }
 }
 
 resource "aws_iam_role" "cluster" {
