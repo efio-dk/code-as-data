@@ -8,5 +8,6 @@ variable "config" {
     worker_instance_type = string
     worker_volume_size   = number
     api_allowed_ips      = list(string)
+    addons               = optional(list(string))
   })
 }

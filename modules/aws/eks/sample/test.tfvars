@@ -9,4 +9,5 @@ config = {
   api_allowed_ips = [
     "83.151.137.82/32", // efio office
   ]
+  addons = ["aws-ebs-csi-driver"]
 }
