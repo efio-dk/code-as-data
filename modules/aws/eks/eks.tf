@@ -6,9 +6,9 @@ resource "aws_eks_cluster" "this" {
 
   vpc_config {
     subnet_ids              = local.config.subnet_ids
-    endpoint_private_access = false
+    endpoint_private_access = true
     endpoint_public_access  = true
-    public_access_cidrs     = ["0.0.0.0/0"]
+    public_access_cidrs     = local.config.api_allowed_ips
     security_group_ids      = [aws_security_group.master.id]
   }
 
