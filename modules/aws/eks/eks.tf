@@ -68,68 +68,7 @@ resource "aws_eks_node_group" "this" {
   ]
 
   lifecycle {
-    ignore_changes = [scaling_config[0].desired_size]
+    ignore_changes        = [scaling_config[0].desired_size]
     create_before_destroy = true
-  }
-}
-
-resource "kubernetes_cluster_role_v1" "contributer" {
-  metadata {
-    name = "system:contributer"
-  }
-
-  aggregation_rule {
-    cluster_role_selectors {
-      match_labels = {
-        "rbac.authorization.k8s.io/aggregate-to-edit" = "true"
-      }
-    }
-  }
-}
-
-
-resource "kubernetes_cluster_role_binding_v1" "contributer" {
-  metadata {
-    name = kubernetes_cluster_role_v1.contributer.metadata[0].name
-  }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = kubernetes_cluster_role_v1.contributer.metadata[0].name
-  }
-  subject {
-    kind      = "Group"
-    name      = kubernetes_cluster_role_v1.contributer.metadata[0].name
-    api_group = "rbac.authorization.k8s.io"
-  }
-}
-
-resource "kubernetes_cluster_role_v1" "view_only" {
-  metadata {
-    name = "system:viewonly"
-  }
-
-  aggregation_rule {
-    cluster_role_selectors {
-      match_labels = {
-        "rbac.authorization.k8s.io/aggregate-to-view" = "true"
-      }
-    }
-  }
-}
-
-resource "kubernetes_cluster_role_binding_v1" "view_only" {
-  metadata {
-    name = kubernetes_cluster_role_v1.view_only.metadata[0].name
-  }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = kubernetes_cluster_role_v1.view_only.metadata[0].name
-  }
-  subject {
-    kind      = "Group"
-    name      = kubernetes_cluster_role_v1.view_only.metadata[0].name
-    api_group = "rbac.authorization.k8s.io"
   }
 }
