@@ -1,5 +1,11 @@
 data "aws_eks_cluster_auth" "eks" {
   name = aws_eks_cluster.this.id
+
+  lifecycle {
+    ignore_changes = [
+      name,
+    ]
+  }
 }
 
 provider "kubernetes" {
